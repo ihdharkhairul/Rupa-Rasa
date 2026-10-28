@@ -24,6 +24,7 @@ function OrderSuccessContent() {
   const [order, setOrder] = useState<OrderSummary | null>(null);
   const [isVerifying, setIsVerifying] = useState(true);
   const [isPaid, setIsPaid] = useState(false);
+  const [isMock, setIsMock] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
 
   useEffect(() => {
@@ -32,10 +33,13 @@ function OrderSuccessContent() {
       return;
     }
 
-    // 1. Muat data order dari sessionStorage lokal
+    // 1. Muat data order dari sessionStorage atau localStorage lokal
     let loadedOrder: OrderSummary | null = null;
     try {
-      const stored = sessionStorage.getItem(`ruparasa_order_${orderId}`);
+      const stored =
+        sessionStorage.getItem(`ruparasa_order_${orderId}`) ||
+        localStorage.getItem(`ruparasa_order_${orderId}`);
+
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.orderSummary) {
@@ -44,18 +48,26 @@ function OrderSuccessContent() {
         }
       }
     } catch (e) {
-      console.error('Gagal membaca order dari session:', e);
+      console.error('Gagal membaca order dari storage:', e);
     }
 
-    // 2. Verifikasi status pembayaran resmi langsung ke server Midtrans
+    // 2. Verifikasi status pembayaran resmi langsung ke server backend
     async function verifyWithServer() {
       try {
         const res = await fetch(`/api/payment/status?orderId=${encodeURIComponent(orderId!)}`);
         const data = await res.json();
 
+        if (data.isMock) {
+          setIsMock(true);
+        }
+
         if (data.success && (data.isPaid || data.transactionStatus === 'settlement')) {
           setIsPaid(true);
-          setStatusMessage('Pembayaran berhasil terverifikasi oleh payment gateway.');
+          setStatusMessage(
+            data.isMock
+              ? 'Pembayaran berhasil disimulasikan (Mode Demo Pengujian Antarmuka).'
+              : 'Pembayaran berhasil terverifikasi oleh payment gateway.'
+          );
         } else {
           setIsPaid(false);
           setStatusMessage(
@@ -153,7 +165,11 @@ function OrderSuccessContent() {
             </div>
 
             <span className="inline-block px-3 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wide bg-white/20 mb-2">
-              {isPaid ? 'Pembayaran Berhasil Diverifikasi' : 'Status Belum Lunas'}
+              {isPaid
+                ? isMock
+                  ? 'Pembayaran Berhasil (Mode Demo)'
+                  : 'Pembayaran Berhasil Diverifikasi'
+                : 'Status Belum Lunas'}
             </span>
 
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
@@ -177,13 +193,15 @@ function OrderSuccessContent() {
               </div>
               <div>
                 <span className="text-neutral-500 font-medium block">Metode Pembayaran</span>
-                <span className="font-bold text-emerald-800">QRIS Dinamis (Terverifikasi)</span>
+                <span className="font-bold text-emerald-800">
+                  {isMock ? 'QRIS (Mode Demo)' : 'QRIS Dinamis (Terverifikasi)'}
+                </span>
               </div>
               <div>
                 <span className="text-neutral-500 font-medium block">Status</span>
                 <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Lunas</span>
+                  <span>{isPaid ? (isMock ? 'Lunas (Demo)' : 'Lunas') : 'Belum Lunas'}</span>
                 </span>
               </div>
             </div>

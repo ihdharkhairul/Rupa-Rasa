@@ -1,249 +1,278 @@
-# RupaRasa — E-Commerce Makanan & Minuman (QRIS Dinamis & WhatsApp)
+# Panduan Lengkap Website RupaRasa Kuliner
+### E-Commerce Makanan & Minuman dengan Pembayaran QRIS Dinamis dan Konfirmasi WhatsApp Otomatis
 
-Website e-commerce kuliner modern, responsif, dan siap produksi yang berfokus khusus pada dua kategori produk: **Makanan** dan **Minuman**. Dibangun menggunakan **Next.js App Router**, **TypeScript**, dan **Tailwind CSS** dengan integrasi pembayaran **QRIS Dinamis Midtrans** serta konfirmasi pesanan otomatis ke **WhatsApp**.
-
----
-
-## 🌟 Fitur Utama
-
-1. **Katalog Dua Kategori (Makanan & Minuman)**
-   - Filter cepat kategori *Semua*, *Makanan*, dan *Minuman*.
-   - Fitur pencarian instan berdasarkan nama dan deskripsi menu.
-   - Badge produk menarik (*Terlaris*, *Rekomendasi*, *Best Seller*).
-   - Seluruh data produk tersentralisasi di satu file konfigurasi (`src/config/products.ts`).
-
-2. **Keranjang Belanja Interaktif (Client Storage)**
-   - Tambah menu, sesuaikan jumlah (+ / -), dan hapus item.
-   - Perhitungan otomatis subtotal dan ongkos kirim.
-   - Promo otomatis: **Gratis Ongkos Kirim** untuk pesanan minimum Rp 100.000.
-   - Penyimpanan persisten di browser (`localStorage`) sehingga keranjang tidak hilang saat halaman di-refresh.
-
-3. **Formulir Checkout & Validasi Server**
-   - Validasi nama lengkap, alamat detail, dan format nomor WhatsApp pelanggan.
-   - **Keamanan Total:** Backend tidak mempercayai harga atau total yang dikirim oleh browser. Server menghitung ulang seluruh harga dari katalog resmi sebelum menerbitkan tagihan.
-   - Proteksi klik ganda (*anti-duplicate submit*) saat proses pemesanan.
-
-4. **Pembayaran QRIS Dinamis (Midtrans Core API)**
-   - Menggunakan endpoint server-side Route Handler aman (Server Key tidak pernah bocor ke browser).
-   - Menampilkan kode QR resmi yang didapat dari payment gateway.
-   - Kode Order ID unik untuk setiap transaksi.
-   - Status pembayaran real-time: *Menunggu Pembayaran*, *Pembayaran Berhasil*, atau *Kedaluwarsa*.
-   - Polling status otomatis setiap 5-6 detik serta tombol manual *Periksa Status Pembayaran*.
-
-5. **Pop-up Pembayaran Berhasil & Efek Konfeti**
-   - **HANYA muncul setelah server memverifikasi status transaksi lunas (`settlement`)**.
-   - Dilengkapi animasi checkmark dan efek konfeti selebrasi.
-   - Menampilkan ringkasan pesanan dan Order ID.
-
-6. **Integrasi WhatsApp Otomatis (`wa.me`)**
-   - Tombol utama **"Lanjut ke WhatsApp Toko"** membuka obrolan ke nomor WhatsApp toko.
-   - Pesan dibuat secara dinamis dari formulir checkout pelanggan dengan format terstruktur rapi.
-   - URL-encoded aman dan format nomor internasional (`62xxx`).
-
-7. **Arsitektur Stateless Aman (Tanpa Database)**
-   - Menggunakan signed order token (HMAC-SHA256) untuk menjaga privasi data pelanggan di sesi browser tanpa menyimpan PII publik pada URL.
-   - Siap dideploy ke Vercel tanpa perlu setup database server terlebih dahulu.
+Selamat datang di repositori **RupaRasa Kuliner**. Dokumen panduan ini disusun langkah demi langkah dengan bahasa yang mudah dipahami bagi pemula maupun pengembang profesional.
 
 ---
 
-## 🚀 Panduan Memulai Cepat (Local Development)
+## Daftar Isi
+1. [Persyaratan Software & Menjalankan Project Secara Lokal](#1-persyaratan-software--menjalankan-project-secara-lokal)
+2. [Instalasi Dependency & Menjalankan Development Server](#2-instalasi-dependency--menjalankan-development-server)
+3. [Cara Mengganti Nama Toko, Logo, Gambar, Menu Produk, Kategori, & Harga](#3-cara-mengganti-nama-toko-logo-gambar-menu-produk-kategori--harga)
+4. [Cara Mengatur Nomor WhatsApp Toko & Username Instagram](#4-cara-mengatur-nomor-whatsapp-toko--username-instagram)
+5. [Cara Mengatur Environment Variables (.env.local)](#5-cara-mengatur-environment-variables-envlocal)
+6. [Cara Mendapatkan & Memasang Kredensial Midtrans Sandbox](#6-cara-mendapatkan--memasang-kredensial-midtrans-sandbox)
+7. [Cara Menguji Alur Demo vs Pembayaran Sungguhan](#7-cara-menguji-alur-demo-vs-pembayaran-sungguhan)
+8. [Cara Mengonfigurasi Webhook & Menguji Pembayaran Sandbox](#8-cara-mengonfigurasi-webhook--menguji-pembayaran-sandbox)
+9. [Cara Deploy ke Vercel & Memasukkan Environment Variables](#9-cara-deploy-ke-vercel--memasukkan-environment-variables)
+10. [Checklist Pengujian Sebelum Website Dipublikasikan](#10-checklist-pengujian-sebelum-website-dipublikasikan)
+11. [Penjelasan Keterbatasan Versi Tanpa Database (Stateless v1)](#11-penjelasan-keterbatasan-versi-tanpa-database-stateless-v1)
 
-### 1. Prasyarat
-- Node.js versi 18 atau lebih baru.
-- npm / yarn / pnpm.
+---
 
-### 2. Salin Repositori & Instal Dependensi
-```bash
-# Masuk ke direktori proyek
-cd c:\RupaRasa
+## 1. Persyaratan Software & Menjalankan Project Secara Lokal
 
-# Instal paket dependensi
-npm install
+Sebelum memulai, pastikan perangkat komputer Anda sudah terpasang:
+- **Node.js**: Versi **18.17.0** atau yang lebih baru (disarankan versi LTS terbaru seperti v20 atau v22).  
+  *Cek versi Node.js di terminal:*
+  ```bash
+  node -v
+  ```
+- **npm** (biasanya otomatis terpasang bersama Node.js) atau package manager lain seperti yarn/pnpm.
+- **Git** untuk pengelolaan kode sumber.
+- **Web Browser** modern (Google Chrome, Mozilla Firefox, Microsoft Edge, atau Safari).
+
+---
+
+## 2. Instalasi Dependency & Menjalankan Development Server
+
+1. **Buka Terminal / Command Prompt / PowerShell** dan arahkan ke direktori project:
+   ```bash
+   cd c:\RupaRasa
+   ```
+
+2. **Instal seluruh paket dependensi:**
+   ```bash
+   npm install
+   ```
+
+3. **Jalankan development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Buka browser:** Akses alamat [http://localhost:3000](http://localhost:3000).  
+   Website RupaRasa Kuliner sudah langsung aktif dan dapat Anda coba secara lokal.
+
+---
+
+## 3. Cara Mengganti Nama Toko, Logo, Gambar, Menu Produk, Kategori, & Harga
+
+Seluruh data produk dikelola dari **satu sumber data tunggal (Single Source of Truth)** agar Anda tidak perlu mengedit banyak file:
+
+### A. Mengubah Nama Toko & Informasi Umum
+Buka file: `src/config/store.ts`  
+Anda dapat mengubah nama toko, deskripsi singkat, jam operasional, dan alamat fisik:
+```typescript
+export const STORE_CONFIG = {
+  name: process.env.NEXT_PUBLIC_STORE_NAME || 'RupaRasa Kuliner',
+  tagline: 'Cita Rasa Otentik Makanan & Minuman Nusantara',
+  address: 'Jl. Kuliner Nusantara No. 88, Kebayoran Baru, Jakarta Selatan',
+  operatingHours: 'Setiap Hari: 09.00 - 21.00 WIB',
+  defaultShippingFee: 10000,
+  freeShippingThreshold: 100000,
+};
 ```
 
-### 3. Konfigurasi Environment Variables
-Salin file `.env.example` menjadi `.env.local`:
-```bash
-cp .env.example .env.local
+### B. Mengubah Menu Produk (Katalog)
+Buka file: `src/config/products.ts`  
+Website memiliki 2 kategori: **Makanan** dan **Minuman**. Secara default menampilkan 2 produk contoh (1 Makanan dan 1 Minuman). Anda dapat mengganti nama, harga, deskripsi, atau gambar:
+```typescript
+export const PRODUCTS: Product[] = [
+  {
+    id: 'food-01',
+    name: 'Nasi Goreng Spesial RupaRasa',
+    slug: 'nasi-goreng-spesial-ruparasa',
+    category: 'Makanan', // Pilihan: 'Makanan' | 'Minuman'
+    price: 35000,        // Harga dalam Rupiah (angka murni tanpa titik)
+    unit: 'Porsi',
+    badge: 'Terlaris',
+    isAvailable: true,   // Ubah ke false jika stok sedang habis
+    description: 'Nasi goreng rempah Nusantara disajikan dengan suwiran ayam gurih, telur mata sapi, sate ayam...',
+    image: 'https://images.unsplash.com/...', // URL foto produk makanan
+  },
+  {
+    id: 'drink-01',
+    name: 'Es Kopi Susu Aren Klasik',
+    slug: 'es-kopi-susu-aren-klasik',
+    category: 'Minuman',
+    price: 22000,
+    unit: 'Cup 16oz',
+    badge: 'Best Seller',
+    isAvailable: true,
+    description: 'Kombinasi espresso robusta & arabika lokal pilihan, susu segar creamy, dan gula aren murni...',
+    image: 'https://images.unsplash.com/...', // URL foto produk minuman
+  },
+];
 ```
 
-Isi variabel lingkungan pada `.env.local`:
+> **Catatan:** Backend Route Handler (`/api/payment/charge`) membaca harga dari file ini untuk menghitung ulang tagihan secara aman. Pelanggan tidak bisa memanipulasi harga melalui browser.
+
+---
+
+## 4. Cara Mengatur Nomor WhatsApp Toko & Username Instagram
+
+Pengaturan nomor WhatsApp dan Instagram dapat diatur melalui file konfigurasi lingkungan `.env.local` tanpa menyentuh kode program:
+
+1. **Buka file `.env.local`** di root folder project.
+2. **Atur nomor WhatsApp:**
+   ```env
+   NEXT_PUBLIC_STORE_WHATSAPP="62881080735942"
+   ```
+   *Aturan format:* Gunakan kode negara `62` di awal, tanpa tanda plus (`+`), tanpa spasi, dan tanpa tanda hubung (`-`). Contoh: jika nomor Anda `0881-0807-35942`, tuliskan `62881080735942`.
+3. **Atur username Instagram:**
+   ```env
+   NEXT_PUBLIC_STORE_INSTAGRAM="ruparasa_kuliner"
+   ```
+   *Aturan format:* Tulis username tanpa tanda `@`. Jika belum memiliki akun Instagram toko, kosongkan nilainya (`NEXT_PUBLIC_STORE_INSTAGRAM=""`), dan tombol Instagram di footer akan otomatis menampilkan label nonaktif tanpa membuka tautan palsu.
+
+---
+
+## 5. Cara Mengatur Environment Variables (.env.local)
+
+File `.env.example` disediakan sebagai acuan. Buat atau sesuaikan file `.env.local` dengan format berikut:
+
 ```env
-# Nama Toko
+# ===================================================
+# KONFIGURASI TOKO
+# ===================================================
 NEXT_PUBLIC_STORE_NAME="RupaRasa Kuliner"
+NEXT_PUBLIC_STORE_WHATSAPP="62881080735942"
+NEXT_PUBLIC_STORE_INSTAGRAM=""
+NEXT_PUBLIC_STORE_ADDRESS="Jl. Kuliner Nusantara No. 88, Jakarta Selatan"
 
-# Nomor WhatsApp Toko (Format internasional tanpa '+', contoh: 6281234567890)
-NEXT_PUBLIC_STORE_WHATSAPP="6281234567890"
-
-# Alamat Toko
-NEXT_PUBLIC_STORE_ADDRESS="Jl. Kuliner Nusantara No. 88, Kebayoran Baru, Jakarta Selatan 12180"
-
-# Midtrans Payment Gateway
+# ===================================================
+# MIDTRANS PAYMENT GATEWAY
+# ===================================================
+# Kosongkan atau biarkan placeholder jika ingin menjalankan "Mode Demo"
 MIDTRANS_SERVER_KEY="SB-Mid-server-xxxxxxxxxxxx"
 NEXT_PUBLIC_MIDTRANS_CLIENT_KEY="SB-Mid-client-xxxxxxxxxxxx"
 MIDTRANS_IS_PRODUCTION="false"
 
-# Secret Key untuk Token Sesi Pesanan (Stateless HMAC-SHA256)
-ORDER_SESSION_SECRET="kunci-rahasia-acak-untuk-keamanan-pesanan"
+# ===================================================
+# KEAMANAN SESI ORDER (HMAC-SHA256)
+# ===================================================
+ORDER_SESSION_SECRET="kunci-rahasia-acak-minimal-32-karakter"
 ```
 
-> **Catatan Mode Pengujian (Out-of-the-box):**  
-> Jika Anda belum memiliki Server Key Midtrans, aplikasi secara otomatis mengaktifkan **Mode Simulasi Sandbox Dev**. Anda dapat membuat pesanan, melihat kode QRIS, dan menekan tombol *"Simulasikan Pembayaran Berhasil"* untuk menguji pop-up dan tombol WhatsApp tanpa kartu/bank sungguhan!
-
-### 4. Jalankan Server Pengembangan
-```bash
-npm run dev
-```
-Buka browser di [http://localhost:3000](http://localhost:3000).
+> **PENTING:** Jangan pernah melakukan commit file `.env.local` ke repositori publik (GitHub/GitLab). File `.gitignore` sudah otomatis mengecualikan `.env.local`.
 
 ---
 
-## 💳 Panduan Konfigurasi Midtrans QRIS
+## 6. Cara Mendapatkan & Memasang Kredensial Midtrans Sandbox
 
-### Langkah 1: Mendaftar Akun Midtrans
-1. Kunjungi [dashboard.midtrans.com](https://dashboard.midtrans.com) dan daftar akun merchant (bisa mulai dari Sandbox).
-2. Masuk ke **Settings > Access Keys**.
-3. Salin **Server Key** dan **Client Key**.
-4. Tempelkan ke `.env.local` atau Vercel Environment Variables.
+Untuk menerima pembayaran QRIS dinamis nyata di lingkungan pengujian:
 
-### Langkah 2: Mengaktifkan Metode QRIS
-1. Pada menu dashboard Midtrans, pastikan kanal pembayaran **QRIS** (Gopay/ShopeePay) aktif.
-2. Di mode Sandbox, Midtrans menyediakan simulator QRIS di [simulator.sandbox.midtrans.com/qris/index](https://simulator.sandbox.midtrans.com/qris/index).
-
-### Langkah 3: Konfigurasi Webhook Notifikasi
-1. Masuk ke menu **Settings > Configuration** di Dashboard Midtrans.
-2. Masukkan **Payment Notification URL**:
+1. Kunjungi [dashboard.midtrans.com](https://dashboard.midtrans.com) dan buat akun baru.
+2. Setelah masuk, ubah mode toggle di pojok kiri atas dashboard menjadi **Sandbox Environment**.
+3. Buka menu **Settings > Access Keys**.
+4. Salin:
+   - **Server Key** (contoh: `SB-Mid-server-AbCdEfGhIjK...`)
+   - **Client Key** (contoh: `SB-Mid-client-12345678...`)
+5. Buka file `.env.local` dan masukkan kunci tersebut:
+   ```env
+   MIDTRANS_SERVER_KEY="SB-Mid-server-AbCdEfGhIjK..."
+   NEXT_PUBLIC_MIDTRANS_CLIENT_KEY="SB-Mid-client-12345678..."
+   MIDTRANS_IS_PRODUCTION="false"
    ```
-   https://domain-anda.vercel.app/api/payment/notification
-   ```
-3. Webhook endpoint RupaRasa secara otomatis memvalidasi `signature_key` berbasis algoritma SHA-512 resmi Midtrans:
+6. Simpan file dan restart development server (`npm run dev`).
+
+---
+
+## 7. Cara Menguji Alur Demo vs Pembayaran Sungguhan
+
+Aplikasi RupaRasa membedakan secara tegas antara **Mode Demo** dan **Mode Asli** agar tidak terjadi kesalahpahaman:
+
+### A. Mode Demo (Ketika Server Key Belum Diisi / Masih Placeholder)
+- Pada halaman pembayaran, muncul banner oranye bertuliskan:  
+  **`[MODE DEMO / SIMULASI ANTARMUKA]`**
+- Kode QR ditampilkan dengan kartu placeholder bertuliskan **"KODE QR DEMO - JANGAN TRANSFER UANG"**. Kami tidak menggunakan QR palsu yang seolah-olah rekening aktif.
+- Disediakan tombol pengujian: **`Uji Simulasi Pembayaran Berhasil (Mode Demo)`**.
+- Saat tombol diklik, server memverifikasi dalam konteks demo, membuka pop-up centang hijau bertuliskan **"Status: Berhasil (Simulasi Mode Demo)"**, dan tombol WhatsApp akan membuka chat WhatsApp dengan format pesanan lengkap.
+
+### B. Mode Asli (Ketika Server Key Midtrans Sudah Valid)
+- Banner demo tidak muncul.
+- Halaman menampilkan **QRIS resmi** dari Midtrans API yang dapat discan oleh aplikasi e-wallet atau m-banking sandbox simulator.
+- Tombol simulasi demo otomatis dihilangkan.
+- Verifikasi pembayaran berlangsung secara otomatis melalui polling status backend dan webhook Midtrans.
+
+---
+
+## 8. Cara Mengonfigurasi Webhook & Menguji Pembayaran Sandbox
+
+Ketika pelanggan melakukan scan QRIS dan membayar di aplikasi perbankan, Midtrans akan mengirimkan HTTP POST (webhook) ke server backend toko.
+
+### Konfigurasi di Dashboard Midtrans:
+1. Buka Dashboard Midtrans Sandbox > **Settings > Configuration**.
+2. Pada kolom **Payment Notification URL**, masukkan endpoint webhook toko:
+   - Untuk website yang sudah dideploy ke Vercel:
+     ```
+     https://domain-anda.vercel.app/api/payment/notification
+     ```
+   - Untuk pengujian lokal, gunakan tunnel seperti `ngrok` (contoh: `https://xxxx.ngrok-free.app/api/payment/notification`).
+3. Webhook handler pada file `src/app/api/payment/notification/route.ts` akan secara otomatis memverifikasi signature resmi Midtrans dengan rumus SHA-512:
    $$\text{SHA512}(\text{order\_id} + \text{status\_code} + \text{gross\_amount} + \text{ServerKey})$$
 
-### Langkah 4: Beralih ke Mode Production
-Setelah akun diverifikasi oleh Midtrans:
-1. Ganti `MIDTRANS_IS_PRODUCTION="true"`.
-2. Ganti `MIDTRANS_SERVER_KEY` dan `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` dengan kunci produksi (awalan `Mid-server-...` tanpa `SB-`).
+### Simulator Pembayaran QRIS Midtrans:
+Di mode sandbox, Anda dapat membuka [simulator.sandbox.midtrans.com/qris/index](https://simulator.sandbox.midtrans.com/qris/index), masukkan string QRIS yang didapat dari transaksi, lalu tekan **Pay**. Halaman pembayaran RupaRasa akan otomatis berubah menjadi Lunas dalam 2-5 detik!
 
 ---
 
-## 💬 Format Pesan WhatsApp Dinamis
+## 9. Cara Deploy ke Vercel & Memasukkan Environment Variables
 
-Ketika pelanggan menekan tombol **"Lanjut ke WhatsApp Toko"** pada pop-up sukses atau halaman detail pesanan, aplikasi membuka `https://wa.me/<STORE_PHONE>?text=...` dengan format terstruktur:
+Project Next.js App Router ini 100% siap dideploy ke Vercel:
 
-```text
-Halo, Kak! Saya ingin mengonfirmasi pesanan saya.
-
-*PEMBAYARAN BERHASIL*
-
-Nomor Pesanan: ORD-XXXXXX-XXXX
-
-Nama: Budi Santoso
-Nomor WhatsApp: 081234567890
-Alamat Pengiriman: Jl. Mawar No. 12, Kebayoran Baru, Jakarta Selatan
-
-*Detail Pesanan:*
-- Nasi Goreng Spesial RupaRasa x 2 — Rp 70.000
-- Es Kopi Susu Aren Klasik x 2 — Rp 44.000
-
-Subtotal: Rp 114.000
-Ongkir: Gratis (Promo)
-Total Pembayaran: Rp 114.000
-Metode Pembayaran: QRIS
-Status Pembayaran: Berhasil
-
-Catatan: Tolong sambalnya dipisah ya kak
-
-Mohon informasi lebih lanjut mengenai pesanan saya. Terima kasih!
-```
-
-> **Pemberitahuan Penting:** Tautan `wa.me` hanya membuka aplikasi WhatsApp pelanggan dengan teks yang telah terisi otomatis secara aman. Pelanggan tetap menekan tombol **Kirim** di WhatsApp mereka. Aplikasi tidak mengklaim pesan telah terkirim sebelum pelanggan mengirimkannya.
-
----
-
-## 🍱 Mengubah & Menambah Menu (Single Source of Truth)
-
-Seluruh katalog makanan dan minuman dapat dikelola pada satu file:
-👉 [`src/config/products.ts`](file:///c:/RupaRasa/src/config/products.ts)
-
-Contoh struktur produk:
-```typescript
-{
-  id: 'food-05',
-  name: 'Sate Ayam Madura Istimewa',
-  slug: 'sate-ayam-madura-istimewa',
-  category: 'Makanan', // 'Makanan' | 'Minuman'
-  price: 32000,
-  unit: 'Porsi (10 tusuk)',
-  badge: 'Menu Baru',
-  isFeatured: true,
-  isAvailable: true,
-  description: 'Daging ayam pilihan dibakar dengan bumbu kacang lembut gurih...',
-  image: 'https://images.unsplash.com/...',
-}
-```
-
----
-
-## 🔒 Catatan Keamanan & Arsitektur Tanpa Database (Stateless)
-
-Versi 1.0 ini dirancang khusus **tanpa mewajibkan database server eksternal**:
-1. **Stateless Backend:** Memori serverless (seperti Vercel Functions) bersifat efemeral. Oleh karena itu, server tidak mengandalkan variabel global in-memory untuk menyimpan pesanan.
-2. **Katalog Tepercaya:** Harga dihitung ulang dari file konfigurasi server saat checkout (`POST /api/payment/charge`). Manipulasi harga di sisi browser klien akan diabaikan.
-3. **Session Token HMAC-SHA256:** Detail formulir checkout pelanggan ditandatangani dengan kunci rahasia server dan disimpan di `sessionStorage` browser pemesan. Pengguna lain yang hanya menebak `orderId` di URL tidak dapat membaca nama, nomor HP, atau alamat pelanggan.
-4. **Keterbatasan & Roadmap v2:**
-   - *Penyimpanan Jangka Panjang:* Jika pembeli menghapus cache browser atau membuka link dari perangkat berbeda beberapa hari kemudian, detail teks formulir lokal tidak terbaca (namun status transaksi di payment gateway tetap terverifikasi lunas).
-   - *Deduplikasi Webhook Multi-Instance:* Untuk pencatatan transaksi multi-tahun, webhook retry deduplication yang ketat, serta dashboard admin inventaris real-time, kami menyarankan menambahkan database relasional seperti PostgreSQL (Supabase / Neon) atau Redis pada versi berikutnya.
-
----
-
-## 🌐 Panduan Deployment ke Vercel
-
-1. **Push ke Git (GitHub / GitLab / Bitbucket)**
+1. **Unggah project ke GitHub / GitLab:**
    ```bash
    git add .
-   git commit -m "feat: complete food and beverage ecommerce with QRIS and WhatsApp"
-   git remote add origin https://github.com/username/ruparasa.git
-   git push -u origin main
+   git commit -m "feat: rupa-rasa kuliner initial version"
+   git push origin main
    ```
-
-2. **Import ke Vercel**
-   - Buka [vercel.com/new](https://vercel.com/new).
-   - Pilih repositori Git proyek Anda.
-   - Framework preset otomatis terdeteksi sebagai **Next.js**.
-
-3. **Atur Environment Variables di Vercel Dashboard**
-   Tambahkan variabel berikut di menu *Settings > Environment Variables*:
-   - `NEXT_PUBLIC_STORE_NAME`
-   - `NEXT_PUBLIC_STORE_WHATSAPP`
-   - `NEXT_PUBLIC_STORE_ADDRESS`
-   - `MIDTRANS_SERVER_KEY`
-   - `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY`
-   - `MIDTRANS_IS_PRODUCTION`
-   - `ORDER_SESSION_SECRET`
-
-4. **Klik Deploy**
-   Vercel akan menjalankan build otomatis dan memberikan domain publik HTTPS (`https://ruparasa.vercel.app`).
-   Masukkan URL webhook tersebut ke dashboard Midtrans.
+2. **Buka [vercel.com](https://vercel.com) dan pilih "Add New Project".**
+3. **Pilih repositori Git Anda.**
+4. Pada bagian **Environment Variables**, tambahkan variabel berikut:
+   - `NEXT_PUBLIC_STORE_NAME`: `RupaRasa Kuliner`
+   - `NEXT_PUBLIC_STORE_WHATSAPP`: `62881080735942`
+   - `NEXT_PUBLIC_STORE_INSTAGRAM`: `ruparasa_kuliner` (opsional)
+   - `NEXT_PUBLIC_STORE_ADDRESS`: `Jl. Kuliner Nusantara No. 88, Jakarta Selatan`
+   - `MIDTRANS_SERVER_KEY`: Server Key Anda dari Midtrans
+   - `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY`: Client Key Anda dari Midtrans
+   - `MIDTRANS_IS_PRODUCTION`: `false` (atau `true` jika akun Midtrans sudah live)
+   - `ORDER_SESSION_SECRET`: Masukkan string acak yang aman
+5. **Klik "Deploy".** Vercel akan memproses build secara otomatis.
+6. Salin domain yang diberikan oleh Vercel (contoh: `https://ruparasa-kuliner.vercel.app`) dan daftarkan webhook di dashboard Midtrans.
 
 ---
 
-## 📋 Status Kesiapan Fitur
+## 10. Checklist Pengujian Sebelum Website Dipublikasikan
 
-| Fitur | Status | Keterangan |
-| :--- | :---: | :--- |
-| Katalog Makanan & Minuman | ✅ Berfungsi | Responsive, pencarian, dan filter kategori |
-| Keranjang Belanja | ✅ Berfungsi | LocalStorage persistent, increment/decrement |
-| Formulir Checkout | ✅ Berfungsi | Validasi data, anti-double click |
-| Backend Price Recalculation | ✅ Berfungsi | Server Route Handler aman |
-| Integrasi QRIS Midtrans | ✅ Berfungsi | Core API `/v2/charge`, render QR code |
-| Polling Status Pembayaran | ✅ Berfungsi | Endpoint `/api/payment/status` |
-| Webhook Notifikasi Midtrans | ✅ Berfungsi | Signature SHA-512 verification |
-| Pop-up Sukses Terverifikasi | ✅ Berfungsi | Muncul hanya saat status `settlement` |
-| Integrasi WhatsApp Dinamis | ✅ Berfungsi | Tautan `wa.me` dengan teks pesanan checkout |
-| Mode Simulasi Sandbox Dev | ✅ Berfungsi | Pengujian lokal langsung tanpa kunci Midtrans |
+Sebelum website digunakan oleh pelanggan nyata, lakukan verifikasi berikut:
+- [ ] **Katalog:** Menampilkan 2 produk (1 Makanan dan 1 Minuman).
+- [ ] **Pencarian & Filter:** Filter "Semua", "Makanan", dan "Minuman" bekerja akurat.
+- [ ] **Keranjang:** Tambah produk, ubah jumlah (+ / -), hapus produk, dan total terhitung akurat.
+- [ ] **Checkout:** Formulir memvalidasi nama minimal 3 karakter, nomor HP 9-15 digit, dan alamat minimal 10 karakter.
+- [ ] **Anti-Double Click:** Tombol "Bayar Sekarang" dinonaktifkan saat sedang memproses transaksi.
+- [ ] **Pembayaran:** Halaman `/payment/[orderId]` menampilkan Order ID, total, dan batas waktu 15 menit.
+- [ ] **Reload Aman:** Merefresh atau membuka kembali halaman `/payment/[orderId]` tidak menghilangkan data pesanan.
+- [ ] **Pop-up Sukses:** Pop-up hanya muncul setelah status lunas diverifikasi oleh server.
+- [ ] **WhatsApp Toko:** Tombol "Lanjut ke WhatsApp Toko" membuka chat nomor toko dengan rincian pesanan yang sudah terisi otomatis dan rapi.
+- [ ] **Footer:** Ikon Instagram menggunakan ikon Instagram resmi dan tidak ada ikon kamera yang salah tempat di header.
 
 ---
 
-&copy; 2026 **RupaRasa Kuliner**. Dibuat untuk menghadirkan pengalaman belanja kuliner online yang praktis, aman, dan memuaskan.
-#   R u p a - R a s a  
- 
+## 11. Penjelasan Keterbatasan Versi Tanpa Database (Stateless v1)
+
+Sesuai spesifikasi, versi 1.0 ini dirancang **tanpa mewajibkan database server eksternal** demi kemudahan deployment dan biaya operasional yang hemat:
+
+1. **Penyimpanan Sesi Klien (localStorage & sessionStorage):**  
+   Data rincian nama dan alamat pengiriman disimpan di perangkat pemesan untuk keperluan pembuatan pesan WhatsApp dan pencetakan bukti transaksi. Pengguna lain yang hanya menebak Order ID tidak dapat mengakses data pribadi pelanggan tersebut.
+2. **Keterbatasan Riwayat Multi-Perangkat:**  
+   Jika pelanggan membuka tautan bukti pesanan dari perangkat atau browser yang berbeda setelah beberapa hari, detail nama/alamat lokal tidak tersedia di perangkat baru tersebut (namun status transaksi di payment gateway tetap terverifikasi lunas).
+3. **Deduplikasi Webhook:**  
+   Midtrans dapat mengirimkan notifikasi ulang jika jaringan sempat terputus. Tanpa database, backend memvalidasi signature secara aman dan merespons HTTP 200.
+4. **Roadmap v2 (Opsional di Masa Depan):**  
+   Untuk pencatatan laporan penjualan tahunan, manajemen stok berkurang otomatis, analitik multi-cabang, serta sistem login pengguna, Anda dapat menghubungkan project ini dengan database seperti PostgreSQL (Supabase / Neon) atau Prisma ORM.
+
+---
+
+&copy; 2026 **RupaRasa Kuliner**. Dibuat dengan cinta untuk memajukan bisnis kuliner Nusantara.

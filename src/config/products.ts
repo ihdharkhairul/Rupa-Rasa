@@ -2,11 +2,13 @@ import { Product } from '@/types';
 
 /**
  * SUMBER DATA TUNGGAL PRODUK (Single Source of Truth)
+ * Website hanya memiliki dua kategori: Makanan dan Minuman.
+ * Untuk versi awal ini, menampilkan tepat 2 produk contoh (1 Makanan dan 1 Minuman).
  * Pemilik toko dapat mengubah nama, gambar, harga, deskripsi, dan ketersediaan stok
  * langsung melalui file ini tanpa mengubah kode di file lain.
  */
 export const PRODUCTS: Product[] = [
-  // --- KATEGORI: MAKANAN ---
+  // --- KATEGORI 1: MAKANAN ---
   {
     id: 'food-01',
     name: 'Nasi Goreng Spesial RupaRasa',
@@ -22,53 +24,8 @@ export const PRODUCTS: Product[] = [
     image:
       'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80',
   },
-  {
-    id: 'food-02',
-    name: 'Ayam Bakar Madu Pedas Manis',
-    slug: 'ayam-bakar-madu-pedas-manis',
-    category: 'Makanan',
-    price: 38000,
-    unit: 'Porsi',
-    badge: 'Rekomendasi',
-    isFeatured: true,
-    isAvailable: true,
-    description:
-      'Potongan ayam pejantan empuk yang dimarinasi bumbu ketumbar dan madu hutan alami, dibakar harum dengan olesan karamelisasi saus pedas manis serta lalapan segar.',
-    image:
-      'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'food-03',
-    name: 'Mie Aceh Kuah Daging Sapi',
-    slug: 'mie-aceh-kuah-daging-sapi',
-    category: 'Makanan',
-    price: 40000,
-    unit: 'Porsi',
-    badge: 'Favorit',
-    isFeatured: false,
-    isAvailable: true,
-    description:
-      'Mie kuning tebal dengan kuah kari kental khas Serambi Mekkah, bertabur irisan daging sapi empuk, tauge segar, emping melinjo, dan perasan jeruk nipis.',
-    image:
-      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'food-04',
-    name: 'Dimsum Mentai Panggang (4 pcs)',
-    slug: 'dimsum-mentai-panggang',
-    category: 'Makanan',
-    price: 28000,
-    unit: 'Porsi (4 pcs)',
-    badge: 'Cemilan Populer',
-    isFeatured: false,
-    isAvailable: true,
-    description:
-      'Siomay ayam udang lembut berkualitas tinggi berpadu dengan saus mentai gurih-creamy khas Jepang yang ditorch hingga mengeluarkan aroma panggangan harum.',
-    image:
-      'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=800&q=80',
-  },
 
-  // --- KATEGORI: MINUMAN ---
+  // --- KATEGORI 2: MINUMAN ---
   {
     id: 'drink-01',
     name: 'Es Kopi Susu Aren Klasik',
@@ -83,51 +40,6 @@ export const PRODUCTS: Product[] = [
       'Kombinasi espresso blend robusta & arabika lokal pilihan, susu segar creamy, dan gula aren murni organik tanpa pemanis buatan. Keseimbangan rasa pas di lidah.',
     image:
       'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'drink-02',
-    name: 'Matcha Oatmilk Latte',
-    slug: 'matcha-oatmilk-latte',
-    category: 'Minuman',
-    price: 27000,
-    unit: 'Cup 16oz',
-    badge: 'Artisanal',
-    isFeatured: true,
-    isAvailable: true,
-    description:
-      'Bubuk matcha premium ceremonial grade dipadukan dengan susu oat bebas laktosa yang lembut dan sedikit sentuhan sirup vanila alami. Segar dan menenangkan.',
-    image:
-      'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'drink-03',
-    name: 'Es Jeruk Nipis Madu Selasih',
-    slug: 'es-jeruk-nipis-madu-selasih',
-    category: 'Minuman',
-    price: 18000,
-    unit: 'Cup 16oz',
-    badge: 'Segar Alami',
-    isFeatured: false,
-    isAvailable: true,
-    description:
-      'Perasan air jeruk nipis murni kaya vitamin C disempurnakan madu randu alami dan taburan biji selasih bertekstur. Teman paling pas setelah menyantap makanan gurih.',
-    image:
-      'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'drink-04',
-    name: 'Teh Tarik Rempah Dingin',
-    slug: 'teh-tarik-rempah-dingin',
-    category: 'Minuman',
-    price: 18000,
-    unit: 'Cup 16oz',
-    badge: 'Aroma Khas',
-    isFeatured: false,
-    isAvailable: true,
-    description:
-      'Seduhan daun teh hitam pekat berkualitas yang ditarik berulang kali bersama susu kental manis dan aksen kapulaga serta cengkeh wangi.',
-    image:
-      'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
   },
 ];
 

@@ -57,7 +57,8 @@ export function isMidtransConfigured(): boolean {
   return (
     Boolean(SERVER_KEY) &&
     SERVER_KEY.trim() !== '' &&
-    !SERVER_KEY.includes('SB-Mid-server-xxxxxxxxxxxx')
+    !SERVER_KEY.includes('SB-Mid-server-xxxxxxxxxxxx') &&
+    !SERVER_KEY.includes('your-server-key')
   );
 }
 
@@ -75,27 +76,22 @@ function getAuthHeader(): string {
 export async function chargeMidtransQRIS(
   params: MidtransChargeParams
 ): Promise<MidtransChargeResult> {
-  // Jika Server Key belum diset, gunakan mode simulasi yang aman untuk pengujian lokal
+  // Jika Server Key belum diset, gunakan MODE DEMO (bukan QR acak atau QR statis palsu)
   if (!isMidtransConfigured()) {
     console.warn(
-      '[Midtrans] MIDTRANS_SERVER_KEY belum dikonfigurasi. Menggunakan mode simulasi sandbox.'
+      '[Midtrans] MIDTRANS_SERVER_KEY belum dikonfigurasi. Mengaktifkan Mode Demo Pengujian Antarmuka.'
     );
-
-    // Dummy standard EMVCo QR string untuk preview
-    const dummyQrString = `00020101021226670016ID.CO.QRIS.WWW011893600002011234567802150000000000000000303UME51440014ID.LINKAJA.WWW01189360091100000000000215000000000000000520458125303360540${params.grossAmount}.005802ID5916RUPARASA KULINER6007JAKARTA61051218062070703A016304`;
 
     return {
       isMock: true,
       statusCode: '201',
-      transactionId: `mock-txn-${Date.now()}`,
+      transactionId: `demo-txn-${Date.now()}`,
       orderId: params.orderId,
       grossAmount: params.grossAmount,
       transactionStatus: 'pending',
-      qrString: dummyQrString,
-      // fallback QR image generator online
-      qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-        dummyQrString
-      )}`,
+      // Dalam mode demo, jangan gunakan QR acak yang seolah-olah rekening aktif
+      qrString: undefined,
+      qrImageUrl: undefined,
       expiryTime: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
     };
   }
@@ -142,7 +138,7 @@ export async function chargeMidtransQRIS(
     );
   }
 
-  // Cari URL generate QR code pada array actions
+  // Cari URL generate QR code pada array actions resmi
   let qrImageUrl: string | undefined;
   if (Array.isArray(data.actions)) {
     const qrAction = (data.actions as MidtransAction[]).find(
@@ -174,7 +170,7 @@ export async function checkMidtransStatus(
   orderId: string
 ): Promise<MidtransStatusResult> {
   if (!isMidtransConfigured()) {
-    // Mode simulasi lokal
+    // Mode demo / pengujian antarmuka
     return {
       isMock: true,
       orderId,

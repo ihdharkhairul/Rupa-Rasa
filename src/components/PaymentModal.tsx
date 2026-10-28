@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, MessageCircle, FileText, ArrowRight, X } from 'lucide-react';
+import { CheckCircle2, MessageCircle, FileText, ArrowRight, X, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { OrderSummary } from '@/types';
 import { formatRupiah, STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
@@ -12,9 +12,10 @@ interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: OrderSummary;
+  isMockMode?: boolean;
 }
 
-export function PaymentModal({ isOpen, onClose, order }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: PaymentModalProps) {
   useEffect(() => {
     if (isOpen) {
       // Efek konfeti perayaan pembayaran berhasil terverifikasi
@@ -58,8 +59,19 @@ export function PaymentModal({ isOpen, onClose, order }: PaymentModalProps) {
               <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 stroke-[2.2]" />
             </div>
 
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mb-2">
-              Status: Terverifikasi Lunas
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 ${
+                isMockMode
+                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
+                  : 'bg-emerald-100 text-emerald-800'
+              }`}
+            >
+              {isMockMode && <Sparkles className="w-3.5 h-3.5 text-amber-600" />}
+              <span>
+                {isMockMode
+                  ? 'Status: Berhasil (Simulasi Mode Demo)'
+                  : 'Status: Terverifikasi Lunas'}
+              </span>
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight">
@@ -67,7 +79,9 @@ export function PaymentModal({ isOpen, onClose, order }: PaymentModalProps) {
             </h2>
 
             <p className="mt-2 text-xs sm:text-sm text-neutral-600 max-w-sm mx-auto">
-              Terima kasih! Pembayaran QRIS Anda telah kami verifikasi secara resmi di sistem.
+              {isMockMode
+                ? 'Simulasi pengujian antarmuka berhasil. Silakan lanjut ke WhatsApp untuk menguji pengiriman pesan pesanan.'
+                : 'Terima kasih! Pembayaran QRIS Anda telah kami verifikasi secara resmi di sistem backend.'}
             </p>
           </div>
 

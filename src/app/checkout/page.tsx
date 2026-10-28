@@ -104,15 +104,14 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Terjadi kesalahan saat membuat transaksi QRIS.');
       }
 
-      // Simpan session pesanan di browser sessionStorage untuk halaman pembayaran & WhatsApp
+      // Simpan data pesanan di sessionStorage & localStorage agar tidak hilang saat reload
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem(
-          `ruparasa_order_${data.orderId}`,
-          JSON.stringify({
-            orderSummary: data.orderSummary,
-            orderToken: data.orderToken,
-          })
-        );
+        const orderData = JSON.stringify({
+          orderSummary: data.orderSummary,
+          orderToken: data.orderToken,
+        });
+        sessionStorage.setItem(`ruparasa_order_${data.orderId}`, orderData);
+        localStorage.setItem(`ruparasa_order_${data.orderId}`, orderData);
       }
 
       // Kosongkan keranjang belanja

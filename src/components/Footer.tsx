@@ -1,10 +1,35 @@
 import React from 'react';
 import Link from 'next/link';
-import { Citrus, MessageCircle, MapPin, Clock, Phone, ShieldCheck, Camera } from 'lucide-react';
+import { Citrus, MessageCircle, MapPin, Clock, Phone, ShieldCheck } from 'lucide-react';
 import { STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
+
+// Ikon Instagram vektor resmi (Lucide v0.45+ meniadakan ikon merek pihak ketiga)
+function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
 export function Footer() {
   const storePhone = sanitizeWhatsappNumber(STORE_CONFIG.whatsapp);
+  const instagramHandle = STORE_CONFIG.instagram?.trim();
+  const cleanInstagram = instagramHandle.replace(/^@/, '');
+  const instagramUrl = cleanInstagram
+    ? `https://instagram.com/${cleanInstagram}`
+    : '#';
 
   return (
     <footer id="tentang" className="bg-neutral-900 text-neutral-300 pt-16 pb-12 border-t border-neutral-800">
@@ -31,6 +56,7 @@ export function Footer() {
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-2">
+              {/* WhatsApp Contact */}
               <a
                 href={`https://wa.me/${storePhone}?text=${encodeURIComponent(
                   `Halo ${STORE_CONFIG.name}, saya ingin konfirmasi pesanan.`
@@ -38,20 +64,34 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold shadow transition-all"
+                title={`Chat WhatsApp: +${storePhone}`}
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>Chat WhatsApp Kami</span>
+                <span>Chat WhatsApp</span>
               </a>
-              <a
-                href="https://www.instagram.com/ruparasa_jemon/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white text-xs font-semibold transition-colors"
-                aria-label="Kunjungi Instagram @ruparasa_jemon"
-              >
-                <Camera className="w-4 h-4 text-rose-400" />
-                <span>@ruparasa_jemon</span>
-              </a>
+
+              {/* Instagram Toko dengan ikon Instagram resmi */}
+              {cleanInstagram ? (
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white text-xs font-semibold transition-colors"
+                  aria-label={`Kunjungi Instagram @${cleanInstagram}`}
+                  title={`Instagram @${cleanInstagram}`}
+                >
+                  <InstagramIcon className="w-4 h-4 text-pink-400" />
+                  <span>@{cleanInstagram}</span>
+                </a>
+              ) : (
+                <span
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800/60 border border-neutral-700/60 text-neutral-400 text-xs font-medium cursor-default"
+                  title="Username Instagram dapat diatur via NEXT_PUBLIC_STORE_INSTAGRAM di .env.local"
+                >
+                  <InstagramIcon className="w-4 h-4 text-neutral-400" />
+                  <span>Instagram Toko</span>
+                </span>
+              )}
             </div>
           </div>
 
@@ -63,7 +103,7 @@ export function Footer() {
             <ul className="space-y-2.5 text-xs text-neutral-400">
               <li>
                 <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Semua Menu Kuliner
+                  Semua Menu Kuliner (2 Menu)
                 </Link>
               </li>
               <li>
@@ -74,11 +114,6 @@ export function Footer() {
               <li>
                 <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
                   Kategori Minuman Segar
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Menu Promo & Gratis Ongkir
                 </Link>
               </li>
             </ul>
@@ -111,7 +146,7 @@ export function Footer() {
               Keamanan Pembayaran
             </h4>
             <p className="text-xs text-neutral-400 leading-relaxed mb-3">
-              Mendukung pembayaran <strong>QRIS dinamis otomatis</strong> melalui payment gateway Midtrans. Verifikasi dilakukan langsung dari server perbankan.
+              Mendukung pembayaran <strong>QRIS dinamis otomatis</strong> melalui payment gateway Midtrans. Verifikasi dilakukan langsung dari server backend.
             </p>
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800/80 border border-neutral-700 text-xs text-neutral-300">
               <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />

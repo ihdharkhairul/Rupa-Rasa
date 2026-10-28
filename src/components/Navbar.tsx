@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Citrus, MessageCircle, Camera } from 'lucide-react';
+import { ShoppingBag, Citrus, MessageCircle } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
 
@@ -51,7 +51,7 @@ export function Navbar() {
             </Link>
           </nav>
 
-          {/* Action Buttons */}
+          {/* Action Buttons: WhatsApp Toko & Keranjang (Ikon kamera dihapus) */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* WhatsApp Hubungi Toko */}
             <a
@@ -60,22 +60,11 @@ export function Navbar() {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-2 sm:px-3 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-full transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-full transition-all"
               title="Hubungi WhatsApp Toko"
             >
               <MessageCircle className="w-4 h-4 text-emerald-600" />
               <span className="hidden sm:inline">WhatsApp Toko</span>
-            </a>
-
-            <a
-              href="https://www.instagram.com/ruparasa_jemon/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram RupaRasa Jemon"
-              title="Instagram @ruparasa_jemon"
-              className="inline-flex items-center justify-center w-9 h-9 text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-full transition-colors"
-            >
-              <Camera className="w-4 h-4" />
             </a>
 
             {/* Tombol Keranjang */}

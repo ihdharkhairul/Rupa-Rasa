@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { Citrus, MessageCircle, MapPin, Clock, Phone, ShieldCheck } from 'lucide-react';
+import { Citrus, MessageCircle, MapPin, Clock, Phone, ShieldCheck, CalendarCheck } from 'lucide-react';
 import { STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
+import { PREORDER_CONFIG } from '@/config/preorder';
 
 // Ikon Instagram vektor resmi (Lucide v0.45+ meniadakan ikon merek pihak ketiga)
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -46,20 +47,20 @@ export function Footer() {
                   {STORE_CONFIG.name}
                 </span>
                 <span className="text-xs text-emerald-400 font-medium block">
-                  Makanan & Minuman Pilihan
+                  Sistem Pre-Order Mi Jebe & Kuliner
                 </span>
               </div>
             </div>
 
             <p className="text-xs text-neutral-400 leading-relaxed">
-              {STORE_CONFIG.description}
+              Menyajikan Mi Jebe pedas gurih nagih dengan sistem Pre-Order. Seluruh hidangan disiapkan fresh saat jadwal distribusi tiba.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-2">
               {/* WhatsApp Contact */}
               <a
                 href={`https://wa.me/${storePhone}?text=${encodeURIComponent(
-                  `Halo ${STORE_CONFIG.name}, saya ingin konfirmasi pesanan.`
+                  `Halo ${STORE_CONFIG.name}, saya ingin konfirmasi jadwal Pre-Order.`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -70,7 +71,7 @@ export function Footer() {
                 <span>Chat WhatsApp</span>
               </a>
 
-              {/* Instagram Toko dengan ikon Instagram resmi */}
+              {/* Instagram Toko */}
               {cleanInstagram ? (
                 <a
                   href={instagramUrl}
@@ -95,47 +96,58 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Kategori Menu */}
+          {/* Navigasi Menu */}
           <div>
             <h4 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Kategori Menu
+              Menu & Pre-Order
             </h4>
             <ul className="space-y-2.5 text-xs text-neutral-400">
               <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Semua Menu Kuliner (2 Menu)
+                <Link href="/#informasi-po" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <CalendarCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Jadwal & Mekanisme PO</span>
                 </Link>
               </li>
               <li>
                 <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Kategori Makanan Utama
+                  Menu Utama: Mi Jebe Original
                 </Link>
               </li>
               <li>
                 <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Kategori Minuman Segar
+                  Minuman Segar Pelengkap
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Kontak & Lokasi */}
+          {/* Kontak & Jadwal Pre-Order */}
           <div>
             <h4 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Kontak & Operasional
+              Jadwal Pre-Order
             </h4>
             <ul className="space-y-3 text-xs text-neutral-400">
               <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>{STORE_CONFIG.address}</span>
+                <Clock className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold text-white block">Periode Pemesanan:</span>
+                  <span>{PREORDER_CONFIG.orderPeriod.displayPeriod} ({PREORDER_CONFIG.orderPeriod.deadlineNote})</span>
+                </div>
               </li>
-              <li className="flex items-center gap-2.5">
-                <Clock className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span>{STORE_CONFIG.operatingHours}</span>
+              <li className="flex items-start gap-2.5">
+                <CalendarCheck className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold text-white block">Hari Pengantaran/Ambil:</span>
+                  <span>{PREORDER_CONFIG.distributionDaysNote}</span>
+                </div>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <span>+{storePhone}</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>{STORE_CONFIG.address}</span>
               </li>
             </ul>
           </div>
@@ -146,7 +158,7 @@ export function Footer() {
               Keamanan Pembayaran
             </h4>
             <p className="text-xs text-neutral-400 leading-relaxed mb-3">
-              Mendukung pembayaran <strong>QRIS dinamis otomatis</strong> melalui payment gateway Midtrans. Verifikasi dilakukan langsung dari server backend.
+              Mendukung pembayaran <strong>QRIS otomatis</strong> melalui payment gateway resmi Midtrans. Transaksi diverifikasi secara aman oleh server backend kami.
             </p>
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800/80 border border-neutral-700 text-xs text-neutral-300">
               <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -158,10 +170,7 @@ export function Footer() {
         {/* Bottom copyright */}
         <div className="mt-12 pt-8 border-t border-neutral-800 text-center text-xs text-neutral-500">
           <p>
-            &copy; {new Date().getFullYear()} {STORE_CONFIG.name}. Seluruh hak cipta dilindungi.
-          </p>
-          <p className="mt-1 text-[11px] text-neutral-600">
-            Toko e-commerce Makanan & Minuman dengan QRIS Dinamis dan Konfirmasi WhatsApp Otomatis.
+            &copy; {new Date().getFullYear()} {STORE_CONFIG.name}. Pre-Order Makanan Berbasis QRIS & Konfirmasi WhatsApp Otomatis.
           </p>
         </div>
       </div>

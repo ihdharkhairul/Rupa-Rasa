@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { STORE_CONFIG, formatRupiah } from '@/config/store';
+import { PREORDER_CONFIG } from '@/config/preorder';
 
 export function CartDrawer() {
   const {
@@ -26,6 +27,7 @@ export function CartDrawer() {
     0,
     STORE_CONFIG.freeShippingThreshold - subtotal
   );
+  const isPoOpen = PREORDER_CONFIG.isOpen;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -42,7 +44,7 @@ export function CartDrawer() {
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-emerald-700" />
               <h2 className="font-bold text-lg text-neutral-900">
-                Keranjang Belanja
+                Keranjang Pre-Order
               </h2>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                 {totalItemsCount} item
@@ -59,8 +61,18 @@ export function CartDrawer() {
             </button>
           </div>
 
+          {/* Banner Peringatan jika PO Tutup */}
+          {!isPoOpen && cart.length > 0 && (
+            <div className="px-5 py-2.5 bg-amber-50 border-b border-amber-200 flex items-center gap-2 text-xs text-amber-900">
+              <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <span>
+                Pre-Order sedang ditutup. Checkout tidak dapat diproses saat ini.
+              </span>
+            </div>
+          )}
+
           {/* Banner Promo Ongkir */}
-          {cart.length > 0 && (
+          {isPoOpen && cart.length > 0 && (
             <div className="px-5 py-2.5 bg-emerald-50 border-b border-emerald-100 flex items-center gap-2 text-xs text-emerald-900">
               <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               {isFreeShipping ? (
@@ -90,14 +102,14 @@ export function CartDrawer() {
                   Keranjang Masih Kosong
                 </h3>
                 <p className="mt-1 text-xs text-neutral-500 max-w-xs">
-                  Yuk, jelajahi pilihan makanan lezat dan minuman segar kami untuk memesan!
+                  Yuk, pilih porsi Mi Jebe Original favorit Anda untuk jadwal Pre-Order minggu ini!
                 </p>
                 <button
                   onClick={closeCart}
                   type="button"
                   className="mt-6 px-5 py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-800/15 transition-all"
                 >
-                  Pilih Menu Sekarang
+                  Pilih Menu Pre-Order
                 </button>
               </div>
             ) : (
@@ -188,14 +200,24 @@ export function CartDrawer() {
                 </div>
               </div>
 
-              <Link
-                href="/checkout"
-                onClick={closeCart}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-800/20 active:scale-98 transition-all"
-              >
-                <span>Lanjut ke Checkout</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              {isPoOpen ? (
+                <Link
+                  href="/checkout"
+                  onClick={closeCart}
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-800/20 active:scale-98 transition-all"
+                >
+                  <span>Lanjut ke Checkout PO</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  type="button"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-neutral-300 text-neutral-500 font-bold text-sm cursor-not-allowed"
+                >
+                  <span>Pre-Order Sedang Ditutup</span>
+                </button>
+              )}
             </div>
           )}
         </div>

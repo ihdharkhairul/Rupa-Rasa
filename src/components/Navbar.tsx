@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Citrus, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Citrus, MessageCircle, CalendarCheck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
 
@@ -23,8 +23,8 @@ export function Navbar() {
               <span className="font-extrabold text-lg sm:text-xl text-neutral-900 tracking-tight block">
                 {STORE_CONFIG.name}
               </span>
-              <span className="text-[11px] font-medium text-emerald-700 block -mt-0.5">
-                Makanan & Minuman Pilihan
+              <span className="text-[11px] font-semibold text-emerald-700 block -mt-0.5">
+                Pre-Order Mi Jebe & Kuliner
               </span>
             </div>
           </Link>
@@ -38,10 +38,17 @@ export function Navbar() {
               Beranda
             </Link>
             <Link
+              href="/#informasi-po"
+              className="hover:text-emerald-700 transition-colors py-1 hover:border-b-2 hover:border-emerald-600 flex items-center gap-1.5"
+            >
+              <CalendarCheck className="w-4 h-4 text-emerald-600" />
+              <span>Jadwal Pre-Order</span>
+            </Link>
+            <Link
               href="/#katalog"
               className="hover:text-emerald-700 transition-colors py-1 hover:border-b-2 hover:border-emerald-600"
             >
-              Katalog Menu
+              Menu Pre-Order
             </Link>
             <Link
               href="/#tentang"
@@ -51,12 +58,12 @@ export function Navbar() {
             </Link>
           </nav>
 
-          {/* Action Buttons: WhatsApp Toko & Keranjang (Ikon kamera dihapus) */}
+          {/* Action Buttons: WhatsApp Toko & Keranjang */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* WhatsApp Hubungi Toko */}
             <a
               href={`https://wa.me/${storePhone}?text=${encodeURIComponent(
-                `Halo ${STORE_CONFIG.name}, saya ingin bertanya mengenai menu makanan dan minuman.`
+                `Halo ${STORE_CONFIG.name}, saya ingin bertanya mengenai jadwal Pre-Order Mi Jebe.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -72,11 +79,11 @@ export function Navbar() {
               onClick={openCart}
               type="button"
               className="relative flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-medium shadow-md shadow-emerald-800/20 active:scale-95 transition-all"
-              aria-label="Buka Keranjang Belanja"
+              aria-label="Buka Keranjang Pre-Order"
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="text-xs sm:text-sm font-semibold hidden xs:inline">
-                Keranjang
+                Keranjang PO
               </span>
               {isHydrated && totalItemsCount > 0 && (
                 <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 rounded-full border-2 border-emerald-700 animate-in zoom-in-75">

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, MessageCircle, FileText, ArrowRight, X, Sparkles } from 'lucide-react';
+import { CheckCircle2, MessageCircle, FileText, ArrowRight, X, Sparkles, CalendarCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { OrderSummary } from '@/types';
 import { formatRupiah, STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
@@ -32,6 +32,8 @@ export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: Pay
 
   const whatsappUrl = generateWhatsappOrderUrl(order);
   const storePhone = sanitizeWhatsappNumber(STORE_CONFIG.whatsapp);
+  const scheduleText =
+    order.customer.deliverySchedule || order.deliverySchedule || 'Sesuai jadwal PO (Senin/Rabu)';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -75,17 +77,17 @@ export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: Pay
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-black text-neutral-900 tracking-tight">
-              Pembayaran Berhasil!
+              Pre-Order Dikonfirmasi!
             </h2>
 
             <p className="mt-2 text-xs sm:text-sm text-neutral-600 max-w-sm mx-auto">
               {isMockMode
-                ? 'Simulasi pengujian antarmuka berhasil. Silakan lanjut ke WhatsApp untuk menguji pengiriman pesan pesanan.'
-                : 'Terima kasih! Pembayaran QRIS Anda telah kami verifikasi secara resmi di sistem backend.'}
+                ? 'Simulasi pengujian antarmuka berhasil. Silakan lanjut ke WhatsApp untuk mengirimkan pesan konfirmasi Pre-Order.'
+                : 'Terima kasih! Pembayaran QRIS Anda telah kami verifikasi resmi. Makanan siap diproses saat jadwal tiba.'}
             </p>
           </div>
 
-          {/* Rincian Pesanan */}
+          {/* Rincian Pesanan & Jadwal PO */}
           <div className="mt-6 bg-neutral-50 rounded-2xl p-4 sm:p-5 border border-neutral-200/80 space-y-3">
             <div className="flex justify-between items-center text-xs pb-3 border-b border-neutral-200">
               <span className="text-neutral-500 font-medium">Nomor Pesanan</span>
@@ -94,8 +96,19 @@ export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: Pay
               </span>
             </div>
 
+            {/* Jadwal Pre-Order */}
+            <div className="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200 text-xs text-emerald-950 flex items-center gap-2">
+              <CalendarCheck className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+              <div>
+                <span className="text-[10px] text-emerald-700 font-bold uppercase block">
+                  Jadwal Pengambilan / Pengantaran
+                </span>
+                <span className="font-extrabold text-neutral-900">{scheduleText}</span>
+              </div>
+            </div>
+
             <div className="text-xs space-y-1.5 max-h-36 overflow-y-auto pr-1">
-              <span className="font-bold text-neutral-700 block">Pesanan Anda:</span>
+              <span className="font-bold text-neutral-700 block">Menu Pre-Order:</span>
               {order.items.map((item, idx) => (
                 <div key={idx} className="flex justify-between text-neutral-600">
                   <span className="truncate pr-2">
@@ -126,7 +139,7 @@ export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: Pay
               className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-700/30 active:scale-98 transition-all"
             >
               <MessageCircle className="w-5 h-5 text-white" />
-              <span>Lanjut ke WhatsApp Toko (+{storePhone})</span>
+              <span>Konfirmasi ke WhatsApp Toko (+{storePhone})</span>
               <ArrowRight className="w-4 h-4" />
             </a>
 
@@ -137,12 +150,12 @@ export function PaymentModal({ isOpen, onClose, order, isMockMode = false }: Pay
               className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white hover:bg-neutral-100 text-neutral-700 font-bold text-xs sm:text-sm border border-neutral-300 transition-colors"
             >
               <FileText className="w-4 h-4 text-neutral-500" />
-              <span>Lihat Detail Lengkap Pesanan</span>
+              <span>Lihat Nota Lengkap Pesanan</span>
             </Link>
           </div>
 
           <p className="mt-4 text-center text-[11px] text-neutral-500 leading-normal">
-            * Menekan tombol di atas akan membuka aplikasi WhatsApp dengan pesan pesanan yang sudah terisi otomatis. Anda cukup menekan tombol <strong>Kirim</strong> di WhatsApp.
+            * Menekan tombol di atas akan membuka aplikasi WhatsApp dengan format pesanan Pre-Order yang sudah terisi otomatis. Anda cukup menekan tombol <strong>Kirim</strong> di WhatsApp.
           </p>
         </div>
       </div>

@@ -12,28 +12,49 @@ import {
   Loader2,
   Check,
   Lock,
+  CalendarCheck,
+  Truck,
+  Store,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatRupiah } from '@/config/store';
+import { PREORDER_CONFIG, getAvailableSchedules } from '@/config/preorder';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, subtotal, shippingFee, total, clearCart, isHydrated } = useCart();
+
+  const isPoOpen = PREORDER_CONFIG.isOpen;
+  const availableSchedules = getAvailableSchedules();
 
   // Form State
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [deliveryType, setDeliveryType] = useState<'delivery' | 'pickup'>('delivery');
+  const [selectedScheduleId, setSelectedScheduleId] = useState<string>(
+    availableSchedules.length > 0 ? availableSchedules[0].id : ''
+  );
 
   // UI State
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  // Cari objek jadwal terpilih
+  const selectedScheduleObj = availableSchedules.find((s) => s.id === selectedScheduleId);
+  const selectedScheduleLabel = selectedScheduleObj
+    ? `${selectedScheduleObj.day} (${selectedScheduleObj.timeSlot})`
+    : '';
+
   // Validasi Input
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
+
+    if (!isPoOpen) {
+      newErrors.po = 'Pre-Order saat ini sedang ditutup. Tidak dapat melanjutkan pesanan.';
+    }
 
     if (!name.trim()) {
       newErrors.name = 'Nama lengkap wajib diisi.';
@@ -48,10 +69,16 @@ export default function CheckoutPage() {
       newErrors.phone = 'Nomor WhatsApp harus berupa 9 - 15 digit angka.';
     }
 
-    if (!address.trim()) {
-      newErrors.address = 'Alamat pengiriman wajib diisi.';
-    } else if (address.trim().length < 10) {
-      newErrors.address = 'Alamat terlalu singkat. Mohon cantumkan alamat lengkap beserta patokan.';
+    if (deliveryType === 'delivery') {
+      if (!address.trim()) {
+        newErrors.address = 'Alamat pengiriman wajib diisi untuk opsi antar.';
+      } else if (address.trim().length < 8) {
+        newErrors.address = 'Alamat terlalu singkat. Mohon cantumkan alamat lengkap beserta patokan.';
+      }
+    }
+
+    if (!selectedScheduleId || !selectedScheduleObj) {
+      newErrors.schedule = 'Silakan tentukan jadwal pengambilan atau pengiriman yang tersedia.';
     }
 
     setErrors(newErrors);
@@ -85,7 +112,9 @@ export default function CheckoutPage() {
         customer: {
           name: name.trim(),
           phone: phone.trim(),
-          address: address.trim(),
+          address: deliveryType === 'delivery' ? address.trim() : 'Ambil Sendiri di Dapur Rupa-Rasa',
+          deliverySchedule: selectedScheduleLabel,
+          deliveryType,
           notes: notes.trim(),
         },
       };
@@ -101,7 +130,7 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Terjadi kesalahan saat membuat transaksi QRIS.');
+        throw new Error(data.error || 'Terjadi kesalahan saat memproses pesanan Pre-Order.');
       }
 
       // Simpan data pesanan di sessionStorage & localStorage agar tidak hilang saat reload
@@ -117,7 +146,7 @@ export default function CheckoutPage() {
       // Kosongkan keranjang belanja
       clearCart();
 
-      // Alihkan ke Halaman Menunggu Pembayaran
+      // Alihkan ke Halaman Menunggu Pembayaran QRIS
       router.push(`/payment/${encodeURIComponent(data.orderId)}`);
     } catch (err: unknown) {
       const error = err as Error;
@@ -141,16 +170,16 @@ export default function CheckoutPage() {
         <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-4">
           <ShoppingBag className="w-10 h-10" />
         </div>
-        <h1 className="text-2xl font-black text-neutral-900">Keranjang Belanja Kosong</h1>
+        <h1 className="text-2xl font-black text-neutral-900">Keranjang Pre-Order Kosong</h1>
         <p className="mt-2 text-sm text-neutral-600">
-          Anda belum memilih menu makanan atau minuman apapun.
+          Anda belum memilih menu Mi Jebe ataupun minuman pelengkap.
         </p>
         <Link
           href="/#katalog"
           className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-700 text-white font-bold text-sm shadow-md hover:bg-emerald-800 transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Kembali ke Katalog Menu</span>
+          <span>Lihat Menu Pre-Order</span>
         </Link>
       </div>
     );
@@ -171,20 +200,37 @@ export default function CheckoutPage() {
         </div>
 
         <div className="mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mb-2">
+            <CalendarCheck className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Pre-Order: Batch Mi Jebe</span>
+          </div>
           <h1 className="text-2xl sm:text-4xl font-black text-neutral-900 tracking-tight">
-            Checkout Pesanan
+            Checkout Pesanan Pre-Order
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-neutral-600">
-            Lengkapi data pengiriman untuk melanjutkan pembayaran QRIS instan.
+            Tentukan jadwal pengambilan atau pengantaran dan lengkapi data pemesan untuk pembayaran QRIS.
           </p>
         </div>
+
+        {/* Banner PO Ditutup jika ada */}
+        {!isPoOpen && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-300 flex items-start gap-3 text-amber-900 text-xs sm:text-sm">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-600 mt-0.5" />
+            <div>
+              <span className="font-bold block">Pre-Order Sedang Ditutup</span>
+              <span>
+                Pemesanan untuk batch ini sedang tidak dibuka. Anda tidak dapat menyelesaikan checkout saat ini.
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Global Error Banner */}
         {apiError && (
           <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-800 text-xs sm:text-sm">
             <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600 mt-0.5" />
             <div>
-              <span className="font-bold block">Gagal Memproses Transaksi</span>
+              <span className="font-bold block">Gagal Memproses Pesanan</span>
               <span>{apiError}</span>
             </div>
           </div>
@@ -194,18 +240,108 @@ export default function CheckoutPage() {
           {/* Kolom Kiri: Formulir Checkout Pelanggan */}
           <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-neutral-200/90">
             <h2 className="text-lg font-bold text-neutral-900 mb-6 pb-3 border-b border-neutral-100 flex items-center justify-between">
-              <span>Informasi Pengiriman</span>
+              <span>Data Pemesan & Jadwal PO</span>
               <span className="text-xs font-normal text-neutral-400">* Wajib diisi</span>
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* BAGIAN 1: PILIHAN JADWAL DISTRIBUSI PRE-ORDER */}
+              <div>
+                <label className="block text-xs sm:text-sm font-bold text-neutral-900 mb-1.5 flex items-center gap-1.5">
+                  <CalendarCheck className="w-4 h-4 text-emerald-700" />
+                  <span>Jadwal Pengambilan / Pengantaran Tersedia *</span>
+                </label>
+                <p className="text-[11px] text-neutral-500 mb-3">
+                  Pilih hari operasional distribusi Rupa-Rasa (Senin atau Rabu).
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {availableSchedules.map((schedule) => {
+                    const isSelected = selectedScheduleId === schedule.id;
+                    return (
+                      <button
+                        key={schedule.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedScheduleId(schedule.id);
+                          if (errors.schedule) setErrors({ ...errors, schedule: '' });
+                        }}
+                        className={`p-3.5 rounded-2xl border-2 text-left transition-all flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-emerald-600 bg-emerald-50/60 shadow-xs'
+                            : 'border-neutral-200 hover:border-neutral-300 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-extrabold text-sm text-neutral-900">
+                            Hari {schedule.day}
+                          </span>
+                          <div
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                              isSelected
+                                ? 'border-emerald-600 bg-emerald-600 text-white'
+                                : 'border-neutral-300'
+                            }`}
+                          >
+                            {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                          </div>
+                        </div>
+                        <div className="mt-2 text-xs text-neutral-600">
+                          Slot: <strong className="text-neutral-800">{schedule.timeSlot}</strong>
+                        </div>
+                        <span className="mt-2 inline-block text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded w-max">
+                          Fresh Batch
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.schedule && (
+                  <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.schedule}</p>
+                )}
+              </div>
+
+              {/* BAGIAN 2: METODE PENGANTARAN / AMBIL SENDIRI */}
+              <div className="pt-2">
+                <label className="block text-xs sm:text-sm font-bold text-neutral-900 mb-2">
+                  Metode Penerimaan Pesanan
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType('delivery')}
+                    className={`p-3 rounded-xl border text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                      deliveryType === 'delivery'
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs'
+                        : 'border-neutral-200 text-neutral-600 hover:bg-neutral-50'
+                    }`}
+                  >
+                    <Truck className="w-4 h-4 text-emerald-700" />
+                    <span>Diantar ke Alamat</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType('pickup')}
+                    className={`p-3 rounded-xl border text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                      deliveryType === 'pickup'
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs'
+                        : 'border-neutral-200 text-neutral-600 hover:bg-neutral-50'
+                    }`}
+                  >
+                    <Store className="w-4 h-4 text-emerald-700" />
+                    <span>Ambil di Dapur Toko</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Nama Lengkap */}
               <div>
                 <label
                   htmlFor="name"
                   className="block text-xs sm:text-sm font-bold text-neutral-800 mb-1.5"
                 >
-                  Nama Lengkap *
+                  Nama Lengkap Pemesan *
                 </label>
                 <input
                   id="name"
@@ -251,40 +387,42 @@ export default function CheckoutPage() {
                   }`}
                 />
                 <p className="mt-1 text-[11px] text-neutral-500">
-                  Untuk konfirmasi pesanan dan koordinasi pengantaran via WhatsApp.
+                  Digunakan untuk konfirmasi otomatis pesanan Pre-Order dan pengiriman nota via WhatsApp.
                 </p>
                 {errors.phone && (
                   <p className="mt-1 text-xs text-red-600 font-medium">{errors.phone}</p>
                 )}
               </div>
 
-              {/* Alamat Pengiriman */}
-              <div>
-                <label
-                  htmlFor="address"
-                  className="block text-xs sm:text-sm font-bold text-neutral-800 mb-1.5"
-                >
-                  Alamat Lengkap Pengiriman *
-                </label>
-                <textarea
-                  id="address"
-                  rows={3}
-                  placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, dan patokan (misal: pagar hitam depan masjid)..."
-                  value={address}
-                  onChange={(e) => {
-                    setAddress(e.target.value);
-                    if (errors.address) setErrors({ ...errors, address: '' });
-                  }}
-                  className={`w-full px-4 py-2.5 rounded-xl border text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none transition-all ${
-                    errors.address
-                      ? 'border-red-400 bg-red-50/30 focus:ring-2 focus:ring-red-400/20'
-                      : 'border-neutral-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20'
-                  }`}
-                />
-                {errors.address && (
-                  <p className="mt-1 text-xs text-red-600 font-medium">{errors.address}</p>
-                )}
-              </div>
+              {/* Alamat Pengantaran (Jika opsi delivery) */}
+              {deliveryType === 'delivery' && (
+                <div>
+                  <label
+                    htmlFor="address"
+                    className="block text-xs sm:text-sm font-bold text-neutral-800 mb-1.5"
+                  >
+                    Alamat Lengkap Pengantaran *
+                  </label>
+                  <textarea
+                    id="address"
+                    rows={3}
+                    placeholder="Nama jalan, nomor rumah/kantor, lantai, RT/RW, dan patokan..."
+                    value={address}
+                    onChange={(e) => {
+                      setAddress(e.target.value);
+                      if (errors.address) setErrors({ ...errors, address: '' });
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none transition-all ${
+                      errors.address
+                        ? 'border-red-400 bg-red-50/30 focus:ring-2 focus:ring-red-400/20'
+                        : 'border-neutral-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20'
+                    }`}
+                  />
+                  {errors.address && (
+                    <p className="mt-1 text-xs text-red-600 font-medium">{errors.address}</p>
+                  )}
+                </div>
+              )}
 
               {/* Catatan Khusus */}
               <div>
@@ -297,7 +435,7 @@ export default function CheckoutPage() {
                 <input
                   id="notes"
                   type="text"
-                  placeholder="Contoh: Jangan terlalu pedas, es dipisah, sendok plastik..."
+                  placeholder="Contoh: Level pedas sedang, pisah sambal, tanpa daun bawang..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
@@ -333,42 +471,58 @@ export default function CheckoutPage() {
               </div>
 
               {/* Tombol Bayar */}
-              <div className="pt-4">
+              <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-neutral-300 text-white font-bold text-base shadow-lg shadow-emerald-800/20 active:scale-98 transition-all"
+                  disabled={isSubmitting || !isPoOpen}
+                  className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-neutral-300 disabled:cursor-not-allowed text-white font-bold text-base shadow-lg shadow-emerald-800/20 active:scale-98 transition-all"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
                       <span>Menyiapkan QRIS Pembayaran...</span>
                     </>
+                  ) : !isPoOpen ? (
+                    <span>Pre-Order Sedang Ditutup</span>
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      <span>Bayar Sekarang ({formatRupiah(total)})</span>
+                      <span>Bayar Pre-Order Sekarang ({formatRupiah(total)})</span>
                     </>
                   )}
                 </button>
                 <p className="mt-2.5 text-center text-[11px] text-neutral-500">
-                  Pembayaran diproses secara aman menggunakan payment gateway resmi.
+                  Setelah menekan bayar, Anda akan melihat kode QRIS dan diarahkan untuk konfirmasi ke WhatsApp toko.
                 </p>
               </div>
             </form>
           </div>
 
-          {/* Kolom Kanan: Ringkasan Pesanan */}
+          {/* Kolom Kanan: Ringkasan Pesanan & Jadwal PO */}
           <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-neutral-200/90 space-y-6">
             <h2 className="text-lg font-bold text-neutral-900 pb-3 border-b border-neutral-100 flex items-center justify-between">
-              <span>Ringkasan Menu</span>
+              <span>Ringkasan Menu PO</span>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700">
                 {cart.length} menu
               </span>
             </h2>
 
+            {/* Banner Jadwal Terpilih */}
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs">
+              <span className="text-emerald-800 font-bold block mb-1 flex items-center gap-1.5">
+                <CalendarCheck className="w-4 h-4 text-emerald-700" />
+                <span>Jadwal Pengambilan / Pengantaran:</span>
+              </span>
+              <span className="font-extrabold text-sm text-neutral-900 block">
+                {selectedScheduleLabel || 'Belum dipilih'}
+              </span>
+              <span className="text-[11px] text-neutral-500 block mt-0.5">
+                Metode: {deliveryType === 'delivery' ? 'Diantar ke Alamat' : 'Ambil Sendiri di Dapur Toko'}
+              </span>
+            </div>
+
             {/* List Item */}
-            <div className="divide-y divide-neutral-100 max-h-72 overflow-y-auto pr-1">
+            <div className="divide-y divide-neutral-100 max-h-64 overflow-y-auto pr-1">
               {cart.map((item) => (
                 <div key={item.product.id} className="py-3 flex items-center gap-3">
                   <img
@@ -398,9 +552,11 @@ export default function CheckoutPage() {
                 <span className="font-bold text-neutral-900">{formatRupiah(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Ongkos Kirim</span>
+                <span>Biaya Pengantaran</span>
                 <span className="font-bold text-neutral-900">
-                  {shippingFee === 0 ? (
+                  {deliveryType === 'pickup' ? (
+                    <span className="text-emerald-700 font-bold">Ambil Sendiri (Rp 0)</span>
+                  ) : shippingFee === 0 ? (
                     <span className="text-emerald-700 font-extrabold">Gratis (Promo)</span>
                   ) : (
                     formatRupiah(shippingFee)
@@ -408,18 +564,18 @@ export default function CheckoutPage() {
                 </span>
               </div>
               <div className="pt-3 border-t border-neutral-200 flex justify-between items-baseline text-sm">
-                <span className="font-black text-neutral-900">Total Tagihan</span>
+                <span className="font-black text-neutral-900">Total Pembayaran</span>
                 <span className="font-black text-lg text-emerald-800">
-                  {formatRupiah(total)}
+                  {formatRupiah(deliveryType === 'pickup' ? subtotal : total)}
                 </span>
               </div>
             </div>
 
-            {/* Security Guarantee Box */}
+            {/* Security & Fresh Guarantee Box */}
             <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-start gap-2.5 text-xs text-neutral-600">
               <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
               <p className="text-[11px] leading-relaxed">
-                Total pembayaran dihitung ulang dan diverifikasi langsung oleh backend sesuai harga katalog resmi toko.
+                Pesanan Pre-Order Anda langsung diverifikasi oleh sistem backend Rupa-Rasa dan disiapkan higienis saat jadwal tiba.
               </p>
             </div>
           </div>

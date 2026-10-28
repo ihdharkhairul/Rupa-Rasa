@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Loader2,
   HelpCircle,
+  CalendarCheck,
 } from 'lucide-react';
 import { OrderSummary } from '@/types';
 import { STORE_CONFIG, formatRupiah, sanitizeWhatsappNumber } from '@/config/store';
@@ -95,13 +96,15 @@ function OrderSuccessContent() {
 
   const storePhone = sanitizeWhatsappNumber(STORE_CONFIG.whatsapp);
   const helpWhatsappUrl = generateWhatsappHelpUrl(orderId || undefined);
+  const scheduleText =
+    order?.customer?.deliverySchedule || order?.deliverySchedule || 'Sesuai jadwal PO aktif (Senin/Rabu)';
 
   if (isVerifying) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 animate-spin text-emerald-700 mb-3" />
         <p className="text-sm font-semibold text-neutral-600">
-          Memverifikasi status pembayaran dengan payment gateway...
+          Memverifikasi status pesanan Pre-Order...
         </p>
       </div>
     );
@@ -146,7 +149,7 @@ function OrderSuccessContent() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-300 text-xs font-bold text-neutral-700 hover:bg-neutral-100 transition-colors"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>Cetak Bukti</span>
+            <span>Cetak Nota PO</span>
           </button>
         </div>
 
@@ -167,22 +170,43 @@ function OrderSuccessContent() {
             <span className="inline-block px-3 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wide bg-white/20 mb-2">
               {isPaid
                 ? isMock
-                  ? 'Pembayaran Berhasil (Mode Demo)'
-                  : 'Pembayaran Berhasil Diverifikasi'
-                : 'Status Belum Lunas'}
+                  ? 'Pre-Order Berhasil (Mode Demo)'
+                  : 'Pre-Order Terverifikasi Lunas'
+                : 'Status Menunggu Pembayaran'}
             </span>
 
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              {isPaid ? 'Terima Kasih Atas Pesanan Anda!' : 'Konfirmasi Pesanan'}
+              {isPaid ? 'Pre-Order Mi Jebe Diterima!' : 'Konfirmasi Pesanan Pre-Order'}
             </h1>
 
             <p className="mt-1 text-xs sm:text-sm text-emerald-100 max-w-md mx-auto">
               {statusMessage ||
-                'Pesanan Anda sedang dipersiapkan oleh tim dapur kami untuk diantarkan.'}
+                'Pesanan Anda telah tercatat dan akan dipersiapkan segar dari dapur kami sesuai jadwal distribusi.'}
             </p>
           </div>
 
           <div className="p-6 sm:p-8 space-y-6">
+            {/* Banner Jadwal Pre-Order */}
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                <CalendarCheck className="w-5 h-5" />
+              </div>
+              <div className="text-xs">
+                <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block">
+                  Jadwal Pengambilan / Pengantaran Terpilih:
+                </span>
+                <span className="font-extrabold text-sm text-neutral-900 block mt-0.5">
+                  {scheduleText}
+                </span>
+                <span className="text-neutral-500 text-[11px] block mt-0.5">
+                  Metode:{' '}
+                  {order?.customer?.deliveryType === 'pickup'
+                    ? 'Ambil Sendiri di Dapur Rupa-Rasa'
+                    : 'Diantar ke Alamat Pemesan'}
+                </span>
+              </div>
+            </div>
+
             {/* Order Identity Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80 text-xs">
               <div>
@@ -198,7 +222,7 @@ function OrderSuccessContent() {
                 </span>
               </div>
               <div>
-                <span className="text-neutral-500 font-medium block">Status</span>
+                <span className="text-neutral-500 font-medium block">Status Transaksi</span>
                 <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{isPaid ? (isMock ? 'Lunas (Demo)' : 'Lunas') : 'Belum Lunas'}</span>
@@ -211,7 +235,7 @@ function OrderSuccessContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/70">
                   <span className="font-bold text-neutral-700 block mb-2">
-                    Data Pelanggan:
+                    Data Pemesan:
                   </span>
                   <div className="space-y-1 text-neutral-600">
                     <div>
@@ -230,7 +254,7 @@ function OrderSuccessContent() {
 
                 <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/70">
                   <span className="font-bold text-neutral-700 block mb-2">
-                    Alamat Pengantaran:
+                    Alamat Pengantaran / Lokasi:
                   </span>
                   <p className="text-neutral-600 leading-relaxed">
                     {order.customer.address}
@@ -241,7 +265,7 @@ function OrderSuccessContent() {
               <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-600 flex items-start gap-2.5">
                 <HelpCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                 <p>
-                  Detail formulir hanya disimpan secara aman pada sesi browser Anda (arsitektur v1 tanpa database). Anda dapat mengonfirmasi nomor pesanan ini ke WhatsApp toko.
+                  Detail formulir hanya disimpan secara aman pada sesi browser Anda. Anda dapat mengonfirmasi nomor pesanan ini ke WhatsApp toko.
                 </p>
               </div>
             )}
@@ -250,7 +274,7 @@ function OrderSuccessContent() {
             {order && (
               <div>
                 <h3 className="font-bold text-sm text-neutral-900 mb-3">
-                  Rincian Item Menu:
+                  Rincian Item Menu Pre-Order:
                 </h3>
                 <div className="divide-y divide-neutral-100 border-y border-neutral-100 text-xs">
                   {order.items.map((item, idx) => (
@@ -277,9 +301,9 @@ function OrderSuccessContent() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Ongkos Kirim</span>
+                    <span>Biaya Pengantaran</span>
                     <span className="font-bold text-neutral-900">
-                      {order.shippingFee === 0 ? 'Gratis (Promo)' : formatRupiah(order.shippingFee)}
+                      {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
                     </span>
                   </div>
                   <div className="pt-2 border-t border-neutral-200 flex justify-between items-baseline text-sm">
@@ -301,7 +325,7 @@ function OrderSuccessContent() {
                 className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-700/25 active:scale-98 transition-all"
               >
                 <MessageCircle className="w-5 h-5 text-white" />
-                <span>Lanjut ke WhatsApp Toko (+{storePhone})</span>
+                <span>Konfirmasi ke WhatsApp Toko (+{storePhone})</span>
               </a>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -319,7 +343,7 @@ function OrderSuccessContent() {
                   href="/"
                   className="text-xs font-bold text-emerald-800 hover:underline"
                 >
-                  Pesan Menu Lainnya &rarr;
+                  Lihat Menu Pre-Order Lainnya &rarr;
                 </Link>
               </div>
             </div>

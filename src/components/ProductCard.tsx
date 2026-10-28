@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Check, Utensils, Coffee } from 'lucide-react';
+import { Plus, Check, Utensils, Coffee, Clock } from 'lucide-react';
 import { Product } from '@/types';
 import { formatRupiah } from '@/config/store';
 import { useCart } from '@/context/CartContext';
+import { PREORDER_CONFIG } from '@/config/preorder';
 
 interface ProductCardProps {
   product: Product;
@@ -14,8 +15,11 @@ export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const [isAddedAnim, setIsAddedAnim] = useState(false);
 
+  const isPoOpen = PREORDER_CONFIG.isOpen;
+  const canOrder = product.isAvailable && isPoOpen;
+
   const handleAdd = () => {
-    if (!product.isAvailable) return;
+    if (!canOrder) return;
     addToCart(product, 1);
     setIsAddedAnim(true);
     setTimeout(() => {
@@ -46,21 +50,28 @@ export function ProductCard({ product }: ProductCardProps) {
           <span>{product.category}</span>
         </div>
 
-        {/* Custom Badge jika ada (e.g. Terlaris, Best Seller) */}
+        {/* Custom Badge PO (e.g. Menu Utama PO, Rekomendasi) */}
         {product.badge && (
           <div className="absolute top-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-emerald-700 text-white shadow-sm">
             {product.badge}
           </div>
         )}
 
-        {/* Status Tidak Tersedia */}
-        {!product.isAvailable && (
+        {/* Status Jika Pre-Order Ditutup */}
+        {!isPoOpen ? (
+          <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-[2px] flex items-center justify-center p-4">
+            <span className="px-3 py-1.5 rounded-lg bg-neutral-800 text-amber-200 text-xs font-bold uppercase tracking-wider shadow border border-amber-400/30 flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-amber-300" />
+              <span>PO Ditutup</span>
+            </span>
+          </div>
+        ) : !product.isAvailable ? (
           <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-[2px] flex items-center justify-center p-4">
             <span className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold uppercase tracking-wider shadow">
               Stok Habis
             </span>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Product Content */}
@@ -78,7 +89,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Price & Add to Cart button */}
         <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
           <div>
-            <span className="text-xs text-neutral-400 block font-medium">Harga</span>
+            <span className="text-[11px] text-neutral-400 block font-medium">Harga Pre-Order</span>
             <div className="flex items-baseline gap-1">
               <span className="text-base sm:text-lg font-black text-emerald-800">
                 {formatRupiah(product.price)}
@@ -91,10 +102,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <button
             onClick={handleAdd}
-            disabled={!product.isAvailable}
+            disabled={!canOrder}
             type="button"
             className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 ${
-              !product.isAvailable
+              !canOrder
                 ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
                 : isAddedAnim
                 ? 'bg-emerald-600 text-white shadow-md'
@@ -102,7 +113,11 @@ export function ProductCard({ product }: ProductCardProps) {
             }`}
             aria-label={`Tambah ${product.name} ke keranjang`}
           >
-            {isAddedAnim ? (
+            {!isPoOpen ? (
+              <span>PO Ditutup</span>
+            ) : !product.isAvailable ? (
+              <span>Habis</span>
+            ) : isAddedAnim ? (
               <>
                 <Check className="w-4 h-4 animate-in zoom-in" />
                 <span className="hidden xs:inline">Ditambahkan</span>
@@ -110,7 +125,7 @@ export function ProductCard({ product }: ProductCardProps) {
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                <span>+ Pesan</span>
+                <span>+ Pesan PO</span>
               </>
             )}
           </button>

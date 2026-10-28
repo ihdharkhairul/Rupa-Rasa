@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   XCircle,
   Info,
+  CalendarCheck,
 } from 'lucide-react';
 import { PaymentModal } from '@/components/PaymentModal';
 import { OrderSummary } from '@/types';
@@ -167,6 +168,8 @@ export default function PaymentWaitingPage() {
   };
 
   const helpWhatsappUrl = generateWhatsappHelpUrl(orderId);
+  const scheduleText =
+    order?.customer?.deliverySchedule || order?.deliverySchedule || 'Sesuai jadwal PO (Senin/Rabu)';
 
   return (
     <div className="min-h-screen bg-neutral-50/70 py-10 sm:py-16">
@@ -217,7 +220,7 @@ export default function PaymentWaitingPage() {
               )}
               <span className="font-extrabold text-sm sm:text-base tracking-wide">
                 {paymentStatus === 'settlement'
-                  ? 'PEMBAYARAN BERHASIL DIVERIFIKASI'
+                  ? 'PEMBAYARAN PRE-ORDER BERHASIL'
                   : paymentStatus === 'expire'
                   ? 'WAKTU PEMBAYARAN KEDALUWARSA'
                   : paymentStatus === 'cancel'
@@ -249,14 +252,14 @@ export default function PaymentWaitingPage() {
           )}
 
           <div className="p-6 sm:p-8">
-            {/* Keterangan Wajib: Pelanggan harus menyelesaikan pembayaran terlebih dahulu */}
+            {/* Keterangan Pre-Order & Pembayaran */}
             {paymentStatus === 'pending' && (
               <div className="mb-6 p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex items-start gap-3 text-xs text-emerald-950">
                 <Info className="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold block mb-0.5">Selesaikan Pembayaran Terlebih Dahulu</span>
+                  <span className="font-bold block mb-0.5">Selesaikan Pembayaran Pre-Order</span>
                   <p className="text-emerald-800 leading-relaxed">
-                    Mohon lakukan scan dan selesaikan pembayaran QRIS di bawah ini. Setelah Anda membayar di aplikasi, sistem kami akan memverifikasi status secara otomatis dan membuka pop-up konfirmasi WhatsApp.
+                    Mohon scan QRIS di bawah ini untuk mengunci kuota pesanan Pre-Order Anda. Setelah pembayaran terverifikasi, sistem kami akan menampilkan pop-up konfirmasi WhatsApp secara otomatis.
                   </p>
                 </div>
               </div>
@@ -286,7 +289,7 @@ export default function PaymentWaitingPage() {
               </div>
 
               <div>
-                <span className="text-xs text-neutral-500 font-medium block">Total yang Harus Dibayar</span>
+                <span className="text-xs text-neutral-500 font-medium block">Total Pembayaran</span>
                 <span className="text-xl sm:text-2xl font-black text-emerald-800">
                   {order ? formatRupiah(order.total) : 'Memuat total...'}
                 </span>
@@ -369,7 +372,7 @@ export default function PaymentWaitingPage() {
 
               <p className="mt-4 text-xs text-neutral-500 text-center max-w-sm">
                 {isMockMode
-                  ? 'Dalam mode demo, gunakan tombol simulasi di bawah untuk menguji pop-up sukses dan tombol WhatsApp.'
+                  ? 'Dalam mode demo, gunakan tombol simulasi di bawah untuk menguji alur pop-up sukses dan tombol konfirmasi WhatsApp.'
                   : 'Scan kode QRIS di atas menggunakan aplikasi m-Banking atau e-Wallet favorit Anda.'}
               </p>
             </div>
@@ -379,10 +382,10 @@ export default function PaymentWaitingPage() {
               <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs">
                 <div className="flex items-center gap-2 font-bold text-amber-900 mb-1">
                   <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                  <span>Panel Pengujian Alur Transaksi (Mode Demo)</span>
+                  <span>Panel Pengujian Alur Pre-Order (Mode Demo)</span>
                 </div>
                 <p className="text-[11px] text-amber-800 leading-relaxed mb-3">
-                  Karena Server Key Midtrans belum aktif, Anda dapat menguji seluruh alur (pop-up pembayaran berhasil dan pesan otomatis WhatsApp) dengan tombol simulasi di bawah:
+                  Karena Server Key Midtrans belum aktif, Anda dapat menguji seluruh alur (pop-up pembayaran berhasil dan pesan otomatis WhatsApp Pre-Order) dengan tombol simulasi di bawah:
                 </p>
                 <button
                   onClick={() => checkStatus(true)}
@@ -491,12 +494,24 @@ export default function PaymentWaitingPage() {
               )}
             </div>
 
-            {/* Rincian Pesanan Pelanggan */}
+            {/* Rincian Pesanan Pelanggan & Jadwal PO */}
             {order && (
               <div className="mt-6 pt-4 border-t border-neutral-100">
                 <span className="text-xs font-bold text-neutral-800 block mb-2">
-                  Rincian Pesanan:
+                  Rincian Pesanan Pre-Order:
                 </span>
+
+                {/* Banner Jadwal PO */}
+                <div className="p-3 mb-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs flex items-center gap-2">
+                  <CalendarCheck className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-emerald-700 font-bold uppercase block">
+                      Jadwal Pengambilan / Pengantaran
+                    </span>
+                    <strong className="text-neutral-900">{scheduleText}</strong>
+                  </div>
+                </div>
+
                 <div className="divide-y divide-neutral-100 text-xs">
                   {order.items.map((it, idx) => (
                     <div key={idx} className="py-2 flex justify-between">
@@ -509,9 +524,9 @@ export default function PaymentWaitingPage() {
                     </div>
                   ))}
                   <div className="py-2 flex justify-between text-neutral-600">
-                    <span>Ongkos Kirim</span>
+                    <span>Biaya Pengantaran</span>
                     <span>
-                      {order.shippingFee === 0 ? 'Gratis' : formatRupiah(order.shippingFee)}
+                      {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
                     </span>
                   </div>
                   <div className="py-2 flex justify-between font-bold text-neutral-900">

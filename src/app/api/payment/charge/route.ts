@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateTrustedOrder } from '@/config/products';
+import { isPreOrderOpen } from '@/config/preorder';
 import { chargeMidtransQRIS } from '@/lib/midtrans';
 import { createOrderSessionToken } from '@/lib/token';
 import { OrderSummary } from '@/types';
@@ -7,6 +8,17 @@ import { STORE_CONFIG } from '@/config/store';
 
 export async function POST(request: NextRequest) {
   try {
+    // 0. Validasi Status Pre-Order
+    if (!isPreOrderOpen()) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Sistem Pre-Order saat ini sedang ditutup. Mohon nantikan jadwal batch berikutnya.',
+        },
+        { status: 400 }
+      );
+    }
+
     const body = await request.json();
     const { items, customer } = body;
 
@@ -18,7 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, phone, address, notes } = customer;
+    const { name, phone, address, deliverySchedule, deliveryType, notes } = customer;
 
     if (!name || typeof name !== 'string' || name.trim().length < 3) {
       return NextResponse.json(
@@ -45,11 +57,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!address || typeof address !== 'string' || address.trim().length < 8) {
+    const isPickup = deliveryType === 'pickup';
+
+    if (!isPickup && (!address || typeof address !== 'string' || address.trim().length < 8)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Alamat pengiriman wajib diisi dengan jelas (minimal 8 karakter).',
+          error: 'Alamat pengantaran wajib diisi dengan jelas (minimal 8 karakter).',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validasi Jadwal Pre-Order
+    if (!deliverySchedule || typeof deliverySchedule !== 'string' || deliverySchedule.trim() === '') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Jadwal pengambilan atau pengantaran Pre-Order wajib dipilih.',
         },
         { status: 400 }
       );
@@ -64,13 +89,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Backend menghitung ulang dan tidak mempercayai harga dari client!
+    const effectiveShippingFee = isPickup ? 0 : STORE_CONFIG.defaultShippingFee;
     const { verifiedItems, subtotal, shippingFee, grandTotal } =
-      calculateTrustedOrder(items, STORE_CONFIG.defaultShippingFee);
+      calculateTrustedOrder(items, effectiveShippingFee);
 
     // 3. Buat ID Pesanan yang Unik
     const timestamp = Date.now().toString(36).toUpperCase();
     const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const orderId = `ORD-${timestamp}-${randomSuffix}`;
+    const orderId = `ORD-PO-${timestamp}-${randomSuffix}`;
 
     // 4. Buat Permintaan Charge QRIS ke Midtrans
     const midtransResult = await chargeMidtransQRIS({
@@ -98,13 +124,15 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    // 5. Susun Ringkasan Pesanan Lengkap
+    // 5. Susun Ringkasan Pesanan Pre-Order Lengkap
     const orderSummary: OrderSummary = {
       orderId,
       customer: {
         name: name.trim(),
         phone: cleanedPhone,
-        address: address.trim(),
+        address: isPickup ? 'Ambil Sendiri di Dapur Rupa-Rasa' : address.trim(),
+        deliverySchedule: deliverySchedule.trim(),
+        deliveryType: isPickup ? 'pickup' : 'delivery',
         notes: notes ? String(notes).trim() : undefined,
       },
       items: verifiedItems,
@@ -113,6 +141,8 @@ export async function POST(request: NextRequest) {
       total: grandTotal,
       paymentMethod: 'QRIS',
       status: 'pending',
+      deliverySchedule: deliverySchedule.trim(),
+      deliveryType: isPickup ? 'pickup' : 'delivery',
       createdAt: new Date().toISOString(),
       qrisData: {
         qrString: midtransResult.qrString,
@@ -137,7 +167,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: err.message || 'Terjadi kesalahan sistem saat memproses transaksi.',
+        error: err.message || 'Terjadi kesalahan sistem saat memproses transaksi Pre-Order.',
       },
       { status: 500 }
     );

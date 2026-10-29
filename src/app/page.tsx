@@ -9,9 +9,9 @@ import {
   Calendar,
   Clock,
   AlertCircle,
-  CheckCircle2,
   ArrowRight,
   Info,
+  Sparkles,
 } from 'lucide-react';
 import { Hero } from '@/components/Hero';
 import { ProductCard } from '@/components/ProductCard';
@@ -39,6 +39,7 @@ export default function HomePage() {
   }, [selectedCategory, searchQuery]);
 
   // Hitung jumlah produk per kategori
+  const countBundling = PRODUCTS.filter((p) => p.category === 'Paket Bundling').length;
   const countMakanan = PRODUCTS.filter((p) => p.category === 'Makanan').length;
   const countMinuman = PRODUCTS.filter((p) => p.category === 'Minuman').length;
 
@@ -68,7 +69,7 @@ export default function HomePage() {
           )}
 
           {/* Kartu Informasi Utama Pre-Order */}
-          <div className="bg-gradient-to-br from-emerald-50/90 via-teal-50/50 to-white rounded-3xl p-6 sm:p-10 border border-emerald-200/80 shadow-sm mb-12">
+          <div className="bg-gradient-to-br from-emerald-50/90 via-amber-50/30 to-white rounded-3xl p-6 sm:p-10 border border-emerald-200/80 shadow-sm mb-12">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
               <div className="md:col-span-7">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mb-3">
@@ -79,9 +80,8 @@ export default function HomePage() {
                   Disiapkan Fresh Berdasarkan Pesanan Anda
                 </h2>
                 <p className="mt-2.5 text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                  {PREORDER_CONFIG.announcement} Kami tidak menyediakan makanan siap saji yang
-                  disimpan lama; seluruh porsi Mi Jebe dimasak saat jadwal pengambilan atau pengantaran
-                  tiba untuk menjamin kenikmatan maksimal.
+                  {PREORDER_CONFIG.announcement} Seluruh porsi Mie Jebew dimasak mendadak saat hari
+                  pengambilan atau pengantaran tiba untuk menjaga cita rasa dan tekstur kenyal terbaik.
                 </p>
 
                 {/* Grid Info Periode & Distribusi */}
@@ -131,16 +131,18 @@ export default function HomePage() {
                   </div>
 
                   <div className="py-4 space-y-2">
-                    <div className="text-xs text-neutral-600 flex justify-between">
-                      <span>Menu Andalan:</span>
-                      <strong className="text-neutral-900">Mi Jebe Original</strong>
+                    <div className="text-xs text-neutral-600 flex justify-between items-center">
+                      <span>Promo Spesial:</span>
+                      <strong className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded font-black">
+                        Paket Bundling Mi Jebe + Lemon Tea
+                      </strong>
                     </div>
                     <div className="text-xs text-neutral-600 flex justify-between">
-                      <span>Harga Porsi:</span>
-                      <strong className="text-emerald-800">Rp 25.000 / Porsi</strong>
+                      <span>Harga Bundling:</span>
+                      <strong className="text-emerald-800">Rp 30.000 (Hemat Rp 5.000)</strong>
                     </div>
                     <div className="text-xs text-neutral-600 flex justify-between">
-                      <span>Pilihan Hari Distribusi:</span>
+                      <span>Jadwal Distribusi:</span>
                       <strong className="text-neutral-900">Senin & Rabu</strong>
                     </div>
                   </div>
@@ -154,7 +156,7 @@ export default function HomePage() {
                       : 'bg-neutral-600 hover:bg-neutral-700'
                   }`}
                 >
-                  <span>{isOpen ? 'Lihat Menu & Pesan Sekarang' : 'Lihat Daftar Menu'}</span>
+                  <span>{isOpen ? 'Lihat Menu & Pesan Pre-Order' : 'Lihat Daftar Menu'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
@@ -168,7 +170,7 @@ export default function HomePage() {
                 Cara Mudah Pre-Order di Rupa-Rasa
               </h3>
               <p className="text-xs sm:text-sm text-neutral-500 mt-1">
-                Ikuti 4 langkah sederhana berikut untuk memesan Mi Jebe favorit Anda
+                Ikuti 4 langkah sederhana berikut untuk memesan Mie Jebew & Lemon Tea favorit Anda
               </p>
             </div>
 
@@ -198,45 +200,49 @@ export default function HomePage() {
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mb-2">
-              Katalog Pre-Order
+              Katalog Pre-Order Rupa-Rasa
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight">
-              Menu Pre-Order Rupa-Rasa
+              3 Pilihan Menu Pre-Order Rupa-Rasa
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-neutral-600">
-              Pilih porsi Mi Jebe dan minuman favorit. Seluruh hidangan disiapkan segar sesuai
-              jadwal distribusi yang Anda pilih.
+              Tersedia 3 pilihan menu: Mi Jebe (makanan), Lemon Tea (minuman), atau Paket Bundling Mi Jebe + Lemon Tea (1 porsi Mi Jebe + 1 cup Lemon Tea).
             </p>
           </div>
 
           {/* Search Bar & Filter Controls */}
           <div className="max-w-4xl mx-auto bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-neutral-200/80 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 p-1 bg-neutral-100/90 rounded-xl w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 p-1 bg-neutral-100/90 rounded-xl w-full sm:w-auto overflow-x-auto">
               {[
                 { label: 'Semua', count: PRODUCTS.length },
+                { label: 'Paket Bundling', count: countBundling },
                 { label: 'Makanan', count: countMakanan },
                 { label: 'Minuman', count: countMinuman },
               ].map(({ label, count }) => {
                 const isActive = selectedCategory === label;
+                const isBundleTab = label === 'Paket Bundling';
                 return (
                   <button
                     key={label}
                     onClick={() => setSelectedCategory(label)}
                     type="button"
-                    className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
+                    className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                       isActive
-                        ? 'bg-emerald-700 text-white shadow-sm'
+                        ? isBundleTab
+                          ? 'bg-gradient-to-r from-amber-600 to-emerald-700 text-white shadow-sm'
+                          : 'bg-emerald-700 text-white shadow-sm'
                         : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60'
                     }`}
                   >
+                    {isBundleTab && <Sparkles className="w-3.5 h-3.5 text-amber-300" />}
                     {label === 'Makanan' && <Utensils className="w-3.5 h-3.5" />}
                     {label === 'Minuman' && <Coffee className="w-3.5 h-3.5" />}
                     <span>{label}</span>
                     <span
                       className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                         isActive
-                          ? 'bg-emerald-800 text-emerald-100'
+                          ? 'bg-black/20 text-white'
                           : 'bg-neutral-200 text-neutral-600'
                       }`}
                     >
@@ -252,7 +258,7 @@ export default function HomePage() {
               <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Cari menu pre-order..."
+                placeholder="Cari bundling, mie, lemon tea..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm bg-neutral-50 focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600/30 focus:border-emerald-600 transition-all"
@@ -290,7 +296,7 @@ export default function HomePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

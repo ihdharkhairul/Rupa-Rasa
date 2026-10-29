@@ -1,4 +1,4 @@
-export type ProductCategory = 'Makanan' | 'Minuman';
+export type ProductCategory = 'Makanan' | 'Minuman' | 'Paket Bundling';
 
 export interface Product {
   id: string;
@@ -6,12 +6,13 @@ export interface Product {
   slug: string;
   category: ProductCategory;
   price: number;
+  originalPrice?: number; // Harga sebelum diskon bundling (misal Rp 35.000 dicoret jadi Rp 30.000)
   description: string;
   image: string;
   isAvailable: boolean;
   isFeatured?: boolean;
-  unit: string; // e.g. "Porsi", "Cup", "Botol"
-  badge?: string; // e.g. "Pre-Order", "Menu Utama PO", "Favorit"
+  unit: string; // e.g. "Porsi", "Cup", "Paket"
+  badge?: string; // e.g. "Pre-Order", "Menu Utama PO", "Paket Hemat", "Favorit"
 }
 
 export interface CartItem {

@@ -9,6 +9,7 @@ import {
   CheckCircle,
   XCircle,
   Soup,
+  Coffee,
 } from 'lucide-react';
 import { STORE_CONFIG, sanitizeWhatsappNumber } from '@/config/store';
 import { PREORDER_CONFIG } from '@/config/preorder';
@@ -21,13 +22,13 @@ export function Hero() {
     <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50/80 via-white to-white py-12 sm:py-20 lg:py-24 border-b border-emerald-100">
       {/* Background ambient blur circles */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-emerald-200/30 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-teal-200/20 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-amber-200/25 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Sisi Kiri: Teks Pre-Order & Penjelasan Jadwal */}
           <div className="lg:col-span-7 text-center lg:text-left">
-            {/* Status Pre-Order Pill */}
+            {/* Status Pre-Order Pill & Promo Bundling Badge */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-5">
               <span
                 className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-extrabold shadow-xs ${
@@ -52,6 +53,11 @@ export function Hero() {
                 )}
               </span>
 
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <span>Paket Hemat Bundling: Mi Jebe + Lemon Tea</span>
+              </span>
+
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold">
                 <Clock className="w-3.5 h-3.5 text-neutral-500" />
                 <span>Periode: {PREORDER_CONFIG.orderPeriod.displayPeriod}</span>
@@ -59,17 +65,17 @@ export function Hero() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 tracking-tight leading-tight sm:leading-[1.15]">
-              Nikmati Gurih Pedas{' '}
-              <span className="text-emerald-700 underline decoration-emerald-300 decoration-wavy decoration-2">
-                Mi Jebe Original
+              Cita Rasa Juara{' '}
+              <span className="text-emerald-700 underline decoration-amber-400 decoration-wavy decoration-2">
+                Mi Jebe & Lemon Tea
               </span>{' '}
               Sistem Pre-Order
             </h1>
 
             <p className="mt-4 sm:mt-6 text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Pesanan Anda disiapkan segar dari dapur khusus berdasarkan jadwal Pre-Order. Pesan
-              sekarang, bayar instan pakai <strong>QRIS otomatis</strong>, dan makanan siap diantar
-              atau diambil sesuai jadwal pilihan Anda!
+              Nikmati sensasi gurih pedas nagih <strong>Mi Jebe</strong> dipadukan dengan kesegaran{' '}
+              <strong>Lemon Tea</strong> pereda pedas. Seluruh pesanan disiapkan mendadak
+              dari dapur fresh sesuai jadwal Pre-Order pilihan Anda!
             </p>
 
             {/* Banner Info Jadwal Pre-Order Aktif */}
@@ -78,7 +84,7 @@ export function Hero() {
                 <CalendarCheck className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
                 <div className="text-xs sm:text-sm">
                   <div className="font-extrabold text-emerald-950">
-                    Jadwal Distribusi: {PREORDER_CONFIG.distributionDaysNote}
+                    Jadwal Distribusi Operasional: {PREORDER_CONFIG.distributionDaysNote}
                   </div>
                   <p className="text-emerald-800 text-xs mt-0.5">
                     {PREORDER_CONFIG.orderPeriod.deadlineNote}. Pesanan dibuat fresh saat hari pengiriman.
@@ -97,13 +103,13 @@ export function Hero() {
                     : 'bg-neutral-600 hover:bg-neutral-700 text-white'
                 }`}
               >
-                <span>{isOpen ? 'Pilih Menu & Pre-Order' : 'Lihat Menu Pre-Order'}</span>
+                <span>{isOpen ? 'Pesan Paket Bundling Pre-Order' : 'Lihat Menu Pre-Order'}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 
               <a
                 href={`https://wa.me/${storePhone}?text=${encodeURIComponent(
-                  `Halo ${STORE_CONFIG.name}, saya ingin bertanya mengenai jadwal Pre-Order Mi Jebe.`
+                  `Halo ${STORE_CONFIG.name}, saya ingin bertanya mengenai Paket Bundling Mie Jebew dan jadwal Pre-Order.`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -148,29 +154,43 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Sisi Kanan: Visual Showcase Mi Jebe Original */}
+          {/* Sisi Kanan: Visual Showcase Bundling Mie Jebew & Lemon Tea */}
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               {/* Card visual showcase */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-[4/3] sm:aspect-square bg-neutral-100">
                 <img
                   src="https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=1000&q=80"
-                  alt="Mi Jebe Original RupaRasa"
+                  alt="Paket Bundling Mi Jebe RupaRasa"
                   className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-600 text-xs font-bold tracking-wide uppercase">
-                      Menu Utama Pre-Order
+                    <span className="px-2.5 py-0.5 rounded-md bg-amber-500 text-neutral-950 text-xs font-black tracking-wide uppercase">
+                      Paket Bundling Hemat
                     </span>
-                    <span className="px-2 py-0.5 rounded-md bg-lime-400 text-emerald-950 text-xs font-extrabold">
-                      Rp 25.000
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white text-xs font-black">
+                      Rp 30.000
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold">Mi Jebe Original</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold">Paket Bundling Mi Jebe + Lemon Tea</h3>
                   <p className="text-xs sm:text-sm text-neutral-200 mt-1 line-clamp-2">
-                    Mi kenyal bumbu Jebe pedas gurih, suwiran ayam rempah, dan keripik pangsit renyah.
+                    1 Porsi Mi Jebe pedas gurih nagih PLUS 1 cup Lemon Tea segar pereda pedas.
                   </p>
+                </div>
+              </div>
+
+              {/* Floating Lemon Tea Mini Card */}
+              <div className="absolute -top-4 -right-4 sm:-right-6 bg-white p-3 rounded-2xl shadow-xl border border-amber-200 flex items-center gap-2.5 max-w-[210px] animate-in fade-in zoom-in-95">
+                <img
+                  src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=150&q=80"
+                  alt="Lemon Tea Segar"
+                  className="w-11 h-11 rounded-xl object-cover"
+                />
+                <div>
+                  <div className="text-[10px] font-bold text-amber-700 uppercase">Pereda Pedas</div>
+                  <div className="text-xs font-black text-neutral-900 leading-tight">Lemon Tea</div>
+                  <div className="text-[10px] text-emerald-700 font-bold">Lemon Asli Dingin</div>
                 </div>
               </div>
 

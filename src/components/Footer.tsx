@@ -47,13 +47,13 @@ export function Footer() {
                   {STORE_CONFIG.name}
                 </span>
                 <span className="text-xs text-emerald-400 font-medium block">
-                  Sistem Pre-Order Mi Jebe & Kuliner
+                  Sistem Pre-Order Mie Jebew & Kuliner
                 </span>
               </div>
             </div>
 
             <p className="text-xs text-neutral-400 leading-relaxed">
-              Menyajikan Mi Jebe pedas gurih nagih dengan sistem Pre-Order. Seluruh hidangan disiapkan fresh saat jadwal distribusi tiba.
+              Menyajikan Mie Jebew pedas gurih nagih dan Ice Lemon Tea segar dengan sistem Pre-Order. Seluruh hidangan disiapkan fresh saat jadwal distribusi tiba.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-2">
@@ -99,23 +99,28 @@ export function Footer() {
           {/* Navigasi Menu */}
           <div>
             <h4 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Menu & Pre-Order
+              3 Menu Pre-Order
             </h4>
             <ul className="space-y-2.5 text-xs text-neutral-400">
               <li>
-                <Link href="/#informasi-po" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
-                  <CalendarCheck className="w-3.5 h-3.5 text-emerald-500" />
+                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
+                  1. Mi Jebe (Makanan)
+                </Link>
+              </li>
+              <li>
+                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
+                  2. Lemon Tea (Minuman)
+                </Link>
+              </li>
+              <li>
+                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
+                  3. Paket Bundling Mi Jebe + Lemon Tea
+                </Link>
+              </li>
+              <li className="pt-1">
+                <Link href="/#informasi-po" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 text-emerald-400">
+                  <CalendarCheck className="w-3.5 h-3.5" />
                   <span>Jadwal & Mekanisme PO</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Menu Utama: Mi Jebe Original
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  Minuman Segar Pelengkap
                 </Link>
               </li>
             </ul>

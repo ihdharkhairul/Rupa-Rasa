@@ -3,42 +3,62 @@ import { isPreOrderOpen } from '@/config/preorder';
 
 /**
  * SUMBER DATA TUNGGAL PRODUK PRE-ORDER (Single Source of Truth)
- * Menu difokuskan pada hidangan Pre-Order utama: Mi Jebe Original
- * serta menu pelengkap yang dapat dipesan dalam periode Pre-Order aktif.
+ * Katalog website Rupa-Rasa HANYA memiliki tepat 3 produk:
+ * 1. Mi Jebe (Makanan satuan)
+ * 2. Lemon Tea (Minuman satuan)
+ * 3. Paket Bundling Mi Jebe + Lemon Tea (1 porsi Mi Jebe + 1 cup Lemon Tea)
  */
 export const PRODUCTS: Product[] = [
-  // --- KATEGORI 1: MAKANAN (MENU UTAMA PRE-ORDER) ---
+  // 1. MAKANAN SATUAN
   {
     id: 'food-01',
-    name: 'Mi Jebe Original',
-    slug: 'mi-jebe-original',
+    name: 'Mi Jebe',
+    slug: 'mi-jebe',
     category: 'Makanan',
     price: 25000,
     unit: 'Porsi',
-    badge: 'Menu Utama PO',
+    badge: 'Makanan Satuan',
     isFeatured: true,
     isAvailable: true,
     description:
-      'Mi kenyal khas dengan racikan bumbu Jebe pedas gurih nagih, suwiran daging ayam berbumbu rempah, taburan daun bawang segar, dan keripik pangsit renyah.',
+      '1 porsi Mi Jebe dengan mie kenyal khas berbalut bumbu Jebe pedas gurih nagih, suwiran daging ayam rempah, dan taburan keripik pangsit renyah.',
     image:
-      '/images/mie_jebew.jpg',
+      'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=800&q=80',
   },
 
-  // --- KATEGORI 2: MINUMAN PELENGKAP ---
+  // 2. MINUMAN SATUAN
   {
     id: 'drink-01',
     name: 'Lemon Tea',
-    slug: 'lemon tea',
+    slug: 'lemon-tea',
     category: 'Minuman',
-    price: 8000,
+    price: 10000,
     unit: 'Cup 16oz',
-    badge: 'Segar',
-    isFeatured: false,
+    badge: 'Minuman Satuan',
+    isFeatured: true,
     isAvailable: true,
     description:
-      'Seduhan teh melati wangi khas Nusantara dipadukan dengan gula tebu asli dan es batu segar, pereda pedas paling pas untuk Mi Jebe.',
+      '1 cup seduhan teh segar dipadukan dengan perasan jeruk lemon asli dan es batu dingin, sensasi asam manis menyegarkan pereda pedas.',
     image:
-      '/images/image.jpg',
+      'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80',
+  },
+
+  // 3. PAKET BUNDLING (1 PORSI MI JEBE + 1 CUP LEMON TEA)
+  {
+    id: 'bundle-01',
+    name: 'Paket Bundling Mi Jebe + Lemon Tea',
+    slug: 'paket-bundling-mi-jebe-lemon-tea',
+    category: 'Paket Bundling',
+    price: 30000,
+    originalPrice: 35000,
+    unit: 'Paket',
+    badge: 'Paket Hemat',
+    isFeatured: true,
+    isAvailable: true,
+    description:
+      'Paket hemat lengkap berisi 1 porsi Mi Jebe pedas gurih dan 1 cup Lemon Tea dingin segar pereda pedas (kombinasi 1 makanan + 1 minuman).',
+    image:
+      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
   },
 ];
 

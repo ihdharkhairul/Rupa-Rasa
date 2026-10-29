@@ -176,7 +176,7 @@ function OrderSuccessContent() {
             </span>
 
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              {isPaid ? 'Pre-Order Mi Jebe Diterima!' : 'Konfirmasi Pesanan Pre-Order'}
+              {isPaid ? 'Pre-Order Mie Jebew Diterima!' : 'Konfirmasi Pesanan Pre-Order'}
             </h1>
 
             <p className="mt-1 text-xs sm:text-sm text-emerald-100 max-w-md mx-auto">

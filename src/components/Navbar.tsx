@@ -24,7 +24,7 @@ export function Navbar() {
                 {STORE_CONFIG.name}
               </span>
               <span className="text-[11px] font-semibold text-emerald-700 block -mt-0.5">
-                Pre-Order Mi Jebe & Kuliner
+                Pre-Order Mie Jebew & Kuliner
               </span>
             </div>
           </Link>

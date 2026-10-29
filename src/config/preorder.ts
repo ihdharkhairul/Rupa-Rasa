@@ -15,7 +15,7 @@ export const PREORDER_CONFIG: PreOrderConfig = {
   statusLabel: 'OPEN PRE-ORDER',
 
   // Nama batch pre-order saat ini
-  batchName: 'Pre-Order Batch Mingguan Mi Jebe',
+  batchName: 'Pre-Order Batch Mingguan Mie Jebew',
 
   // Periode pemesanan (WIB / Asia/Jakarta)
   orderPeriod: {
@@ -30,7 +30,7 @@ export const PREORDER_CONFIG: PreOrderConfig = {
 
   // Pengumuman singkat di banner Pre-Order
   announcement:
-    'Pesan sekarang dan nikmati Mi Jebe hangat & segar yang disiapkan khusus sesuai jadwal distribusi.',
+    'Pesan sekarang Paket Bundling Hemat Mie Jebew + Fresh Lemon Tea segar, serta menu favorit lainnya yang disiapkan fresh sesuai jadwal distribusi.',
 
   // Jadwal operasional pengambilan / pengiriman yang tersedia untuk dipilih pelanggan
   // Jadwal utama Rupa-Rasa: SENIN dan RABU
@@ -55,8 +55,8 @@ export const PREORDER_CONFIG: PreOrderConfig = {
   steps: [
     {
       number: 1,
-      title: 'Pilih Menu & Porsi',
-      description: 'Pilih porsi Mi Jebe dan menu pendukung favorit Anda ke keranjang.',
+      title: 'Pilih Bundling / Menu',
+      description: 'Pilih Paket Bundling Mie Jebew + Lemon Tea hemat atau menu satuan favorit Anda.',
     },
     {
       number: 2,
@@ -66,7 +66,7 @@ export const PREORDER_CONFIG: PreOrderConfig = {
     {
       number: 3,
       title: 'Bayar via QRIS',
-      description: 'Selesaikan transaksi mudah dan aman dengan scan QRIS instan.',
+      description: 'Selesaikan transaksi mudah dan aman dengan scan QRIS instan otomatis.',
     },
     {
       number: 4,

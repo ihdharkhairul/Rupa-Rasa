@@ -172,7 +172,7 @@ export default function CheckoutPage() {
         </div>
         <h1 className="text-2xl font-black text-neutral-900">Keranjang Pre-Order Kosong</h1>
         <p className="mt-2 text-sm text-neutral-600">
-          Anda belum memilih menu Mi Jebe ataupun minuman pelengkap.
+          Anda belum memilih Paket Bundling Mie Jebew ataupun menu pilihan lainnya.
         </p>
         <Link
           href="/#katalog"
@@ -202,7 +202,7 @@ export default function CheckoutPage() {
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mb-2">
             <CalendarCheck className="w-3.5 h-3.5 text-emerald-700" />
-            <span>Pre-Order: Batch Mi Jebe</span>
+            <span>Pre-Order: Batch Mie Jebew</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black text-neutral-900 tracking-tight">
             Checkout Pesanan Pre-Order

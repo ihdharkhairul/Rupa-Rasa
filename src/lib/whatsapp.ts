@@ -5,7 +5,7 @@ import { STORE_CONFIG, formatRupiah, sanitizeWhatsappNumber } from '@/config/sto
  * Membangun teks pesan konfirmasi Pre-Order ke WhatsApp toko Rupa-Rasa
  * Sesuai spesifikasi Pre-Order:
  *
- * Halo Rupa-Rasa, saya ingin melakukan Pre-Order Mi Jebe.
+ * Halo Rupa-Rasa, saya ingin melakukan Pre-Order Mie Jebew.
  *
  * Detail pesanan:
  * - Nama: [Nama Pelanggan]
@@ -44,14 +44,14 @@ export function buildWhatsappOrderMessage(order: OrderSummary): string {
       ? '\n- Status Pembayaran: Terverifikasi Lunas (QRIS)'
       : '\n- Status Pembayaran: Menunggu Verifikasi';
 
-  const message = `Halo Rupa-Rasa, saya ingin melakukan Pre-Order Mi Jebe.
+  const message = `Halo Rupa-Rasa, saya ingin melakukan Pre-Order Mie Jebew.
 
 Detail pesanan:
 - Nomor Pesanan: ${order.orderId}
 - Nama: ${order.customer.name}
 - Nomor WhatsApp: ${order.customer.phone}
 - Menu: ${menuList}
-- Jumlah Total: ${totalQuantity} porsi/item
+- Jumlah Total: ${totalQuantity} porsi/paket
 - Total pembayaran: ${formatRupiah(order.total)}
 - Jadwal pengambilan/pengiriman: ${scheduleText}
 - Metode pembayaran: QRIS${statusText}${addressText}${notesText}
@@ -83,6 +83,6 @@ export function generateWhatsappHelpUrl(orderId?: string): string {
   const storePhone = sanitizeWhatsappNumber(STORE_CONFIG.whatsapp);
   const helpText = orderId
     ? `Halo admin ${STORE_CONFIG.name}, saya butuh informasi terkait Pre-Order saya dengan Nomor Pesanan: ${orderId}.`
-    : `Halo admin ${STORE_CONFIG.name}, saya ingin bertanya mengenai jadwal Pre-Order dan menu Mi Jebe.`;
+    : `Halo admin ${STORE_CONFIG.name}, saya ingin bertanya mengenai jadwal Pre-Order dan menu Paket Bundling Mie Jebew.`;
   return `https://wa.me/${storePhone}?text=${encodeURIComponent(helpText)}`;
 }

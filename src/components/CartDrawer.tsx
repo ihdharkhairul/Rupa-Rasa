@@ -102,7 +102,7 @@ export function CartDrawer() {
                   Keranjang Masih Kosong
                 </h3>
                 <p className="mt-1 text-xs text-neutral-500 max-w-xs">
-                  Yuk, pilih porsi Mi Jebe Original favorit Anda untuk jadwal Pre-Order minggu ini!
+                  Yuk, pilih Paket Bundling Mie Jebew + Lemon Tea favorit Anda untuk jadwal Pre-Order minggu ini!
                 </p>
                 <button
                   onClick={closeCart}

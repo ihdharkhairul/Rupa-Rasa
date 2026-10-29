@@ -169,7 +169,7 @@ export function ProductCard({ product }: ProductCardProps) {
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                <span>{isBundle ? '+ Ambil Paket' : '+ Pesan PO'}</span>
+                <span>{isBundle ? ' Tambah ke Keranjang' : '+ Pesan PO'}</span>
               </>
             )}
           </button>

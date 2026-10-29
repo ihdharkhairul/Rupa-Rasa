@@ -1,47 +1,14 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import {
-  Search,
-  Utensils,
-  Coffee,
-  FilterX,
-  Calendar,
-  Clock,
-  AlertCircle,
-  ArrowRight,
-  Info,
-  Sparkles,
-} from 'lucide-react';
+import React from 'react';
+import { Calendar, Clock, AlertCircle, ArrowRight, Info } from 'lucide-react';
 import { Hero } from '@/components/Hero';
 import { ProductCard } from '@/components/ProductCard';
 import { PRODUCTS } from '@/config/products';
 import { PREORDER_CONFIG } from '@/config/preorder';
 
 export default function HomePage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
-  const [searchQuery, setSearchQuery] = useState('');
-
   const isOpen = PREORDER_CONFIG.isOpen;
-
-  // Filter produk berdasarkan kategori dan pencarian nama/deskripsi
-  const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
-      const matchCategory =
-        selectedCategory === 'Semua' || product.category === selectedCategory;
-
-      const matchSearch =
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return matchCategory && matchSearch;
-    });
-  }, [selectedCategory, searchQuery]);
-
-  // Hitung jumlah produk per kategori
-  const countBundling = PRODUCTS.filter((p) => p.category === 'Paket Bundling').length;
-  const countMakanan = PRODUCTS.filter((p) => p.category === 'Makanan').length;
-  const countMinuman = PRODUCTS.filter((p) => p.category === 'Minuman').length;
 
   return (
     <div className="min-h-screen">
@@ -108,7 +75,7 @@ export default function HomePage() {
                       {PREORDER_CONFIG.distributionDaysNote}
                     </div>
                     <div className="text-[11px] text-neutral-500 mt-0.5">
-                      Slot waktu: 11.00 – 14.00 WIB
+                      Slot waktu: {PREORDER_CONFIG.schedules[0]?.timeSlot}
                     </div>
                   </div>
                 </div>
@@ -134,12 +101,12 @@ export default function HomePage() {
                     <div className="text-xs text-neutral-600 flex justify-between items-center">
                       <span>Promo Spesial:</span>
                       <strong className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded font-black">
-                        Paket Bundling Mi Jebe + Lemon Tea
+                        Paket Bundling Mie Jebew + Lemon Tea
                       </strong>
                     </div>
                     <div className="text-xs text-neutral-600 flex justify-between">
                       <span>Harga Bundling:</span>
-                      <strong className="text-emerald-800">Rp 30.000 (Hemat Rp 5.000)</strong>
+                      <strong className="text-emerald-800">Rp 15.000 (Hemat Rp 5.000)</strong>
                     </div>
                     <div className="text-xs text-neutral-600 flex justify-between">
                       <span>Jadwal Distribusi:</span>
@@ -203,105 +170,19 @@ export default function HomePage() {
               Katalog Pre-Order Rupa-Rasa
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight">
-              3 Pilihan Menu Pre-Order Rupa-Rasa
+              Paket Bundling Pre-Order Rupa-Rasa
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-neutral-600">
-              Tersedia 3 pilihan menu: Mi Jebe (makanan), Lemon Tea (minuman), atau Paket Bundling Mi Jebe + Lemon Tea (1 porsi Mi Jebe + 1 cup Lemon Tea).
+              Satu paket hemat spesial Market Day: 1 porsi Mie Jebew + 1 cup Lemon Tea cuma Rp 15.000.
             </p>
           </div>
 
-          {/* Search Bar & Filter Controls */}
-          <div className="max-w-4xl mx-auto bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-neutral-200/80 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 p-1 bg-neutral-100/90 rounded-xl w-full sm:w-auto overflow-x-auto">
-              {[
-                { label: 'Semua', count: PRODUCTS.length },
-                { label: 'Paket Bundling', count: countBundling },
-                { label: 'Makanan', count: countMakanan },
-                { label: 'Minuman', count: countMinuman },
-              ].map(({ label, count }) => {
-                const isActive = selectedCategory === label;
-                const isBundleTab = label === 'Paket Bundling';
-                return (
-                  <button
-                    key={label}
-                    onClick={() => setSelectedCategory(label)}
-                    type="button"
-                    className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
-                      isActive
-                        ? isBundleTab
-                          ? 'bg-gradient-to-r from-amber-600 to-emerald-700 text-white shadow-sm'
-                          : 'bg-emerald-700 text-white shadow-sm'
-                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60'
-                    }`}
-                  >
-                    {isBundleTab && <Sparkles className="w-3.5 h-3.5 text-amber-300" />}
-                    {label === 'Makanan' && <Utensils className="w-3.5 h-3.5" />}
-                    {label === 'Minuman' && <Coffee className="w-3.5 h-3.5" />}
-                    <span>{label}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                        isActive
-                          ? 'bg-black/20 text-white'
-                          : 'bg-neutral-200 text-neutral-600'
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Search Input */}
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Cari bundling, mie, lemon tea..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm bg-neutral-50 focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600/30 focus:border-emerald-600 transition-all"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400 hover:text-neutral-600"
-                  aria-label="Hapus pencarian"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-
           {/* Product Grid */}
-          {filteredProducts.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-neutral-200 max-w-md mx-auto my-8 shadow-xs">
-              <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mx-auto mb-4">
-                <FilterX className="w-8 h-8" />
-              </div>
-              <h3 className="font-bold text-base text-neutral-900">Menu Tidak Ditemukan</h3>
-              <p className="mt-1 text-xs text-neutral-500">
-                Tidak ada menu yang sesuai dengan kata kunci &ldquo;{searchQuery}&rdquo;.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('Semua');
-                }}
-                className="mt-5 px-4 py-2 rounded-xl bg-emerald-700 text-white text-xs font-semibold hover:bg-emerald-800 transition-colors"
-              >
-                Reset Pencarian
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-8 max-w-md mx-auto">
+            {PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
       </section>
     </div>

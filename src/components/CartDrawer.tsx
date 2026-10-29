@@ -72,7 +72,7 @@ export function CartDrawer() {
           )}
 
           {/* Banner Promo Ongkir */}
-          {isPoOpen && cart.length > 0 && (
+          {isPoOpen && cart.length > 0 && STORE_CONFIG.defaultShippingFee > 0 && (
             <div className="px-5 py-2.5 bg-emerald-50 border-b border-emerald-100 flex items-center gap-2 text-xs text-emerald-900">
               <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               {isFreeShipping ? (
@@ -182,16 +182,18 @@ export function CartDrawer() {
                   <span>Subtotal Pesanan</span>
                   <span className="font-bold text-neutral-900">{formatRupiah(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Ongkos Kirim</span>
-                  <span className="font-bold text-neutral-900">
-                    {shippingFee === 0 ? (
-                      <span className="text-emerald-700">Gratis (Promo)</span>
-                    ) : (
-                      formatRupiah(shippingFee)
-                    )}
-                  </span>
-                </div>
+                {STORE_CONFIG.defaultShippingFee > 0 && (
+                  <div className="flex justify-between">
+                    <span>Ongkos Kirim</span>
+                    <span className="font-bold text-neutral-900">
+                      {shippingFee === 0 ? (
+                        <span className="text-emerald-700">Gratis (Promo)</span>
+                      ) : (
+                        formatRupiah(shippingFee)
+                      )}
+                    </span>
+                  </div>
+                )}
                 <div className="pt-2 border-t border-neutral-200 flex justify-between items-baseline text-sm">
                   <span className="font-bold text-neutral-900">Total Pembayaran</span>
                   <span className="font-black text-base text-emerald-800">

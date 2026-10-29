@@ -55,7 +55,7 @@ export function Hero() {
 
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>Paket Hemat Bundling: Mi Jebe + Lemon Tea</span>
+                <span>Paket Hemat Bundling: Mie Jebew + Lemon Tea</span>
               </span>
 
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold">
@@ -67,13 +67,13 @@ export function Hero() {
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 tracking-tight leading-tight sm:leading-[1.15]">
               Cita Rasa Juara{' '}
               <span className="text-emerald-700 underline decoration-amber-400 decoration-wavy decoration-2">
-                Mi Jebe & Lemon Tea
+                Mie Jebew & Lemon Tea
               </span>{' '}
               Sistem Pre-Order
             </h1>
 
             <p className="mt-4 sm:mt-6 text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Nikmati sensasi gurih pedas nagih <strong>Mi Jebe</strong> dipadukan dengan kesegaran{' '}
+              Nikmati sensasi gurih pedas nagih <strong>Mie Jebew</strong> dipadukan dengan kesegaran{' '}
               <strong>Lemon Tea</strong> pereda pedas. Seluruh pesanan disiapkan mendadak
               dari dapur fresh sesuai jadwal Pre-Order pilihan Anda!
             </p>
@@ -160,8 +160,8 @@ export function Hero() {
               {/* Card visual showcase */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-[4/3] sm:aspect-square bg-neutral-100">
                 <img
-                  src="https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=1000&q=80"
-                  alt="Paket Bundling Mi Jebe RupaRasa"
+                  src="/images/paket-bundling.jpg"
+                  alt="Mie Jebew RupaRasa"
                   className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
@@ -170,12 +170,12 @@ export function Hero() {
                       Paket Bundling Hemat
                     </span>
                     <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white text-xs font-black">
-                      Rp 30.000
+                      Rp 15.000
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold">Paket Bundling Mi Jebe + Lemon Tea</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold">Paket Bundling Mie Jebew + Lemon Tea</h3>
                   <p className="text-xs sm:text-sm text-neutral-200 mt-1 line-clamp-2">
-                    1 Porsi Mi Jebe pedas gurih nagih PLUS 1 cup Lemon Tea segar pereda pedas.
+                    1 Porsi Mie Jebew pedas gurih nagih PLUS 1 cup Lemon Tea segar pereda pedas.
                   </p>
                 </div>
               </div>
@@ -183,7 +183,7 @@ export function Hero() {
               {/* Floating Lemon Tea Mini Card */}
               <div className="absolute -top-4 -right-4 sm:-right-6 bg-white p-3 rounded-2xl shadow-xl border border-amber-200 flex items-center gap-2.5 max-w-[210px] animate-in fade-in zoom-in-95">
                 <img
-                  src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=150&q=80"
+                  src="/images/lemon tea.jpg"
                   alt="Lemon Tea Segar"
                   className="w-11 h-11 rounded-xl object-cover"
                 />
@@ -195,13 +195,13 @@ export function Hero() {
               </div>
 
               {/* Floating Jadwal Card */}
-              <div className="absolute -bottom-6 -left-4 sm:-left-8 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xl border border-emerald-100 flex items-center gap-3 max-w-[240px] sm:max-w-[270px]">
+              <div className="absolute top-24 sm:top-6 -left-4 sm:-left-8 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xl border border-emerald-100 flex items-center gap-3 max-w-[240px] sm:max-w-[270px]">
                 <div className="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
                   <CalendarCheck className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">
-                    Jadwal Pengiriman
+                    Jadwal Distribusi
                   </div>
                   <div className="text-xs sm:text-sm font-extrabold text-neutral-900 leading-tight">
                     Senin & Rabu

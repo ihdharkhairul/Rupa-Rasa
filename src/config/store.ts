@@ -13,8 +13,8 @@ export const STORE_CONFIG = {
     process.env.NEXT_PUBLIC_STORE_ADDRESS ||
     'Asrama Telkom University, Jl. Telekomunikasi, Terusan Buah Batu, Sukapura, Kecamatan Dayeuhkolot, Kabupaten Bandung, Jawa Barat 40257',
   operatingHours: 'Setiap Hari: 09.00 - 21.00 WIB',
-  defaultShippingFee: 10000,
-  freeShippingThreshold: 100000,
+  defaultShippingFee: 0,
+  freeShippingThreshold: 0,
 };
 
 /**

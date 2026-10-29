@@ -300,12 +300,14 @@ function OrderSuccessContent() {
                       {formatRupiah(order.subtotal)}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Biaya Pengantaran</span>
-                    <span className="font-bold text-neutral-900">
-                      {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
-                    </span>
-                  </div>
+                  {STORE_CONFIG.defaultShippingFee > 0 && (
+                    <div className="flex justify-between">
+                      <span>Biaya Pengantaran</span>
+                      <span className="font-bold text-neutral-900">
+                        {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
+                      </span>
+                    </div>
+                  )}
                   <div className="pt-2 border-t border-neutral-200 flex justify-between items-baseline text-sm">
                     <span className="font-black text-neutral-900">Total Pembayaran</span>
                     <span className="font-black text-lg text-emerald-800">

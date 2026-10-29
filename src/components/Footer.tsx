@@ -99,22 +99,12 @@ export function Footer() {
           {/* Navigasi Menu */}
           <div>
             <h4 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
-              3 Menu Pre-Order
+              Menu Pre-Order
             </h4>
             <ul className="space-y-2.5 text-xs text-neutral-400">
               <li>
                 <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  1. Mi Jebe (Makanan)
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  2. Lemon Tea (Minuman)
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-emerald-400 transition-colors">
-                  3. Paket Bundling Mi Jebe + Lemon Tea
+                  Paket Bundling Mie Jebew + Lemon Tea
                 </Link>
               </li>
               <li className="pt-1">

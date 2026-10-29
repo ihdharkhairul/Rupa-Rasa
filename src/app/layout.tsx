@@ -6,6 +6,9 @@ import { Footer } from '@/components/Footer';
 import { CartDrawer } from '@/components/CartDrawer';
 import { STORE_CONFIG } from '@/config/store';
 
+// Halaman dirender ulang tiap diakses agar status buka/tutup PO selalu sesuai waktu saat ini
+export const dynamic = 'force-dynamic';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,

@@ -523,12 +523,14 @@ export default function PaymentWaitingPage() {
                       </span>
                     </div>
                   ))}
-                  <div className="py-2 flex justify-between text-neutral-600">
-                    <span>Biaya Pengantaran</span>
-                    <span>
-                      {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
-                    </span>
-                  </div>
+                  {STORE_CONFIG.defaultShippingFee > 0 && (
+                    <div className="py-2 flex justify-between text-neutral-600">
+                      <span>Biaya Pengantaran</span>
+                      <span>
+                        {order.shippingFee === 0 ? 'Gratis / Ambil Sendiri' : formatRupiah(order.shippingFee)}
+                      </span>
+                    </div>
+                  )}
                   <div className="py-2 flex justify-between font-bold text-neutral-900">
                     <span>Total Tagihan</span>
                     <span className="text-emerald-800">{formatRupiah(order.total)}</span>

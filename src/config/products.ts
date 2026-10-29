@@ -1,64 +1,27 @@
 import { Product } from '@/types';
 import { isPreOrderOpen } from '@/config/preorder';
+import { STORE_CONFIG } from '@/config/store';
 
 /**
  * SUMBER DATA TUNGGAL PRODUK PRE-ORDER (Single Source of Truth)
- * Katalog website Rupa-Rasa HANYA memiliki tepat 3 produk:
- * 1. Mi Jebe (Makanan satuan)
- * 2. Lemon Tea (Minuman satuan)
- * 3. Paket Bundling Mi Jebe + Lemon Tea (1 porsi Mi Jebe + 1 cup Lemon Tea)
+ * Menu hanya satu: Paket Bundling Mie Jebew + Lemon Tea (khusus Market Day).
  */
 export const PRODUCTS: Product[] = [
-  // 1. MAKANAN SATUAN
-  {
-    id: 'food-01',
-    name: 'Mi Jebe',
-    slug: 'mi-jebe',
-    category: 'Makanan',
-    price: 25000,
-    unit: 'Porsi',
-    badge: 'Makanan Satuan',
-    isFeatured: true,
-    isAvailable: true,
-    description:
-      '1 porsi Mi Jebe dengan mie kenyal khas berbalut bumbu Jebe pedas gurih nagih, suwiran daging ayam rempah, dan taburan keripik pangsit renyah.',
-    image:
-      'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=800&q=80',
-  },
-
-  // 2. MINUMAN SATUAN
-  {
-    id: 'drink-01',
-    name: 'Lemon Tea',
-    slug: 'lemon-tea',
-    category: 'Minuman',
-    price: 10000,
-    unit: 'Cup 16oz',
-    badge: 'Minuman Satuan',
-    isFeatured: true,
-    isAvailable: true,
-    description:
-      '1 cup seduhan teh segar dipadukan dengan perasan jeruk lemon asli dan es batu dingin, sensasi asam manis menyegarkan pereda pedas.',
-    image:
-      'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80',
-  },
-
-  // 3. PAKET BUNDLING (1 PORSI MI JEBE + 1 CUP LEMON TEA)
+  // --- PAKET BUNDLING (SATU-SATUNYA MENU, KHUSUS MARKET DAY) ---
   {
     id: 'bundle-01',
-    name: 'Paket Bundling Mi Jebe + Lemon Tea',
-    slug: 'paket-bundling-mi-jebe-lemon-tea',
+    name: 'Paket Bundling Mie Jebew + Lemon Tea',
+    slug: 'paket-bundling-mie-jebew-lemon-tea',
     category: 'Paket Bundling',
-    price: 30000,
-    originalPrice: 35000,
+    price: 15000,
+    originalPrice: 20000,
     unit: 'Paket',
-    badge: 'Paket Hemat',
+    badge: 'Spesial Market Day',
     isFeatured: true,
     isAvailable: true,
     description:
-      'Paket hemat lengkap berisi 1 porsi Mi Jebe pedas gurih dan 1 cup Lemon Tea dingin segar pereda pedas (kombinasi 1 makanan + 1 minuman).',
-    image:
-      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
+      '1 porsi Mie Jebew pedas gurih nagih dengan bakso dan pangsit goreng renyah, PLUS 1 cup Lemon Tea segar pereda pedas. Hemat Rp 5.000!',
+    image: '/images/paket-bundling.jpg',
   },
 ];
 
@@ -75,7 +38,7 @@ export function getProductById(id: string): Product | undefined {
  */
 export function calculateTrustedOrder(
   cartItems: { productId: string; quantity: number }[],
-  shippingFee: number = 10000
+  shippingFee: number = STORE_CONFIG.defaultShippingFee
 ) {
   // Validasi status Pre-Order
   if (!isPreOrderOpen()) {
@@ -122,8 +85,8 @@ export function calculateTrustedOrder(
     throw new Error('Keranjang belanja kosong.');
   }
 
-  // Gratis ongkir untuk pesanan di atas Rp 100.000
-  const finalShippingFee = subtotal >= 100000 ? 0 : shippingFee;
+  // Gratis ongkir jika subtotal mencapai batas di STORE_CONFIG.freeShippingThreshold (src/config/store.ts)
+  const finalShippingFee = subtotal >= STORE_CONFIG.freeShippingThreshold ? 0 : shippingFee;
   const grandTotal = subtotal + finalShippingFee;
 
   return {

@@ -17,7 +17,7 @@ import {
   Store,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { formatRupiah } from '@/config/store';
+import { STORE_CONFIG, formatRupiah } from '@/config/store';
 import { PREORDER_CONFIG, getAvailableSchedules } from '@/config/preorder';
 
 export default function CheckoutPage() {
@@ -551,18 +551,20 @@ export default function CheckoutPage() {
                 <span>Subtotal Pesanan</span>
                 <span className="font-bold text-neutral-900">{formatRupiah(subtotal)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Biaya Pengantaran</span>
-                <span className="font-bold text-neutral-900">
-                  {deliveryType === 'pickup' ? (
-                    <span className="text-emerald-700 font-bold">Ambil Sendiri (Rp 0)</span>
-                  ) : shippingFee === 0 ? (
-                    <span className="text-emerald-700 font-extrabold">Gratis (Promo)</span>
-                  ) : (
-                    formatRupiah(shippingFee)
-                  )}
-                </span>
-              </div>
+              {STORE_CONFIG.defaultShippingFee > 0 && (
+                <div className="flex justify-between">
+                  <span>Biaya Pengantaran</span>
+                  <span className="font-bold text-neutral-900">
+                    {deliveryType === 'pickup' ? (
+                      <span className="text-emerald-700 font-bold">Ambil Sendiri (Rp 0)</span>
+                    ) : shippingFee === 0 ? (
+                      <span className="text-emerald-700 font-extrabold">Gratis (Promo)</span>
+                    ) : (
+                      formatRupiah(shippingFee)
+                    )}
+                  </span>
+                </div>
+              )}
               <div className="pt-3 border-t border-neutral-200 flex justify-between items-baseline text-sm">
                 <span className="font-black text-neutral-900">Total Pembayaran</span>
                 <span className="font-black text-lg text-emerald-800">

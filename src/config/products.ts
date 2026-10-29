@@ -21,29 +21,14 @@ export const PRODUCTS: Product[] = [
     description:
       'Mi kenyal khas dengan racikan bumbu Jebe pedas gurih nagih, suwiran daging ayam berbumbu rempah, taburan daun bawang segar, dan keripik pangsit renyah.',
     image:
-      'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'food-02',
-    name: 'Mi Jebe Spesial Komplit',
-    slug: 'mi-jebe-spesial-komplit',
-    category: 'Makanan',
-    price: 32000,
-    unit: 'Porsi',
-    badge: 'Rekomendasi',
-    isFeatured: true,
-    isAvailable: true,
-    description:
-      'Porsi komplit Mi Jebe Original ditambah dengan topping bakso sapi kenyal gurih, telur puyuh berbumbu, dan pangsit goreng ekstra renyah.',
-    image:
-      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
+      '/images/mie_jebew.jpg',
   },
 
   // --- KATEGORI 2: MINUMAN PELENGKAP ---
   {
     id: 'drink-01',
-    name: 'Es Teh Manis Melati Segar',
-    slug: 'es-teh-manis-melati-segar',
+    name: 'Lemon Tea',
+    slug: 'lemon tea',
     category: 'Minuman',
     price: 8000,
     unit: 'Cup 16oz',
@@ -53,22 +38,7 @@ export const PRODUCTS: Product[] = [
     description:
       'Seduhan teh melati wangi khas Nusantara dipadukan dengan gula tebu asli dan es batu segar, pereda pedas paling pas untuk Mi Jebe.',
     image:
-      'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'drink-02',
-    name: 'Es Kopi Susu Aren Klasik',
-    slug: 'es-kopi-susu-aren-klasik',
-    category: 'Minuman',
-    price: 20000,
-    unit: 'Cup 16oz',
-    badge: 'Favorit',
-    isFeatured: false,
-    isAvailable: true,
-    description:
-      'Perpaduan kopi espresso robusta & arabika lokal, susu segar creamy gurih, dan cairan gula aren organik murni tanpa pemanis buatan.',
-    image:
-      'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=800&q=80',
+      '/images/image.jpg',
   },
 ];
 

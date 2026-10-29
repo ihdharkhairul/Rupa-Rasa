@@ -11,7 +11,7 @@ export const STORE_CONFIG = {
   instagram: process.env.NEXT_PUBLIC_STORE_INSTAGRAM || '',
   address:
     process.env.NEXT_PUBLIC_STORE_ADDRESS ||
-    'Jl. Kuliner Nusantara No. 88, Kebayoran Baru, Jakarta Selatan 12180',
+    'Asrama Telkom University, Jl. Telekomunikasi, Terusan Buah Batu, Sukapura, Kecamatan Dayeuhkolot, Kabupaten Bandung, Jawa Barat 40257',
   operatingHours: 'Setiap Hari: 09.00 - 21.00 WIB',
   defaultShippingFee: 10000,
   freeShippingThreshold: 100000,
